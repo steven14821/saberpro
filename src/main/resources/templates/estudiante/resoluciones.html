@@ -1,10 +1,51 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/layout :: head('Resoluciones')}"></head>
 <body>
     <div th:replace="~{fragments/layout :: main(~{::section})}">
         <section th:fragment="section">
-        <div class="tab-nav">
+            <!-- Reference Table of Benefits -->
+            <div style="display:flex;gap:1.5rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+                <!-- Saber Pro Table -->
+                <div style="flex:1;min-width:280px;background:linear-gradient(135deg,#1e3a5f,#2c5f8a);padding:1.2rem;border-radius:12px;color:#fff;">
+                    <h4 style="font-size:0.85rem;margin-bottom:0.8rem;opacity:0.8;text-transform:uppercase;letter-spacing:1px;"><i class="fas fa-graduation-cap"></i> Saber Pro (max 300)</h4>
+                    <table style="width:100%;font-size:0.82rem;border-collapse:collapse;">
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.2);">
+                            <td style="padding:6px 0;opacity:0.8;font-weight:bold;">180 – 210</td>
+                            <td style="padding:6px 6px;">Exencion trabajo de grado / Seminario IV (nota 4.5)</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.2);">
+                            <td style="padding:6px 0;opacity:0.8;font-weight:bold;">211 – 240</td>
+                            <td style="padding:6px 6px;">Exencion trabajo de grado / Seminario IV (nota 4.7) + Beca 50% derecho pecuniario</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:6px 0;opacity:0.8;font-weight:bold;">241 +</td>
+                            <td style="padding:6px 6px;">Exencion trabajo de grado / Seminario IV (nota 5.0) + Beca 100% derecho pecuniario</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <!-- Saber T&T Table -->
+                <div style="flex:1;min-width:280px;background:linear-gradient(135deg,#1e5f3a,#2c8a5f);padding:1.2rem;border-radius:12px;color:#fff;">
+                    <h4 style="font-size:0.85rem;margin-bottom:0.8rem;opacity:0.8;text-transform:uppercase;letter-spacing:1px;"><i class="fas fa-university"></i> Saber T&amp;T (max 200)</h4>
+                    <table style="width:100%;font-size:0.82rem;border-collapse:collapse;">
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.2);">
+                            <td style="padding:6px 0;opacity:0.8;font-weight:bold;">120 – 150</td>
+                            <td style="padding:6px 6px;">Exencion trabajo de grado / Seminario II (nota 4.5)</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.2);">
+                            <td style="padding:6px 0;opacity:0.8;font-weight:bold;">151 – 170</td>
+                            <td style="padding:6px 6px;">Exencion trabajo de grado / Seminario II (nota 4.7) + Beca 50% derecho pecuniario</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:6px 0;opacity:0.8;font-weight:bold;">171 +</td>
+                            <td style="padding:6px 6px;">Exencion trabajo de grado / Seminario II (nota 5.0) + Beca 100% derecho pecuniario</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-nav">
             <button class="active" data-tab="tab-vigentes"><i class="fas fa-check-circle"></i> Resoluciones Vigentes</button>
             <button data-tab="tab-vencidas"><i class="fas fa-clock"></i> Resoluciones Vencidas</button>
         </div>

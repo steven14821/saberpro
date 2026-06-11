@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/layout :: head('Detalle Alumno')}"></head>
 <body>
@@ -62,7 +62,7 @@
             </div>
             <div class="card-body">
                 <div style="text-align:center;margin-bottom:2rem;">
-                    <div class="score-circle" th:style="'--score-percent:' + (${nota.getPuntajeGlobal()} * 100 / 1800) + '%'">
+                    <div class="score-circle" th:style="|--score-percent: ${nota.puntajeGlobal * 100 / (nota.tipoExamen == 'SABER_TYT' ? 200 : 300)}%|">
                         <span class="score-value" th:text="${nota.getPuntajeGlobal()}">1500</span>
                         <span class="score-label">Puntaje Global</span>
                     </div>
@@ -105,11 +105,26 @@
                             <div class="competency-fill" th:data-width="${nota.ingles * 100 / 300}"></div>
                         </div>
                     </div>
-                    <div class="score-item">
-                        <div class="score-item-value" th:text="${nota.formularioEspecifico}">250</div>
-                        <div class="score-item-label">Form. Especifico</div>
+                    <!-- Modulos Especificos (solo si es Saber Pro) -->
+                    <div class="score-item" th:if="${nota.tipoExamen == 'SABER_PRO'}">
+                        <div class="score-item-value" th:text="${nota.formulacionProyectos} + '/300'">250/300</div>
+                        <div class="score-item-label">Form. de Proyectos de Ing.</div>
                         <div class="competency-track" style="margin-top:0.5rem;">
-                            <div class="competency-fill" th:data-width="${nota.formularioEspecifico * 100 / 300}"></div>
+                            <div class="competency-fill" th:data-width="${nota.formulacionProyectos * 100 / 300}"></div>
+                        </div>
+                    </div>
+                    <div class="score-item" th:if="${nota.tipoExamen == 'SABER_PRO'}">
+                        <div class="score-item-value" th:text="${nota.pensamientoCientifico} + '/300'">250/300</div>
+                        <div class="score-item-label">Pensamiento Cientifico</div>
+                        <div class="competency-track" style="margin-top:0.5rem;">
+                            <div class="competency-fill" th:data-width="${nota.pensamientoCientifico * 100 / 300}"></div>
+                        </div>
+                    </div>
+                    <div class="score-item" th:if="${nota.tipoExamen == 'SABER_PRO'}">
+                        <div class="score-item-value" th:text="${nota.disenoSoftware} + '/300'">250/300</div>
+                        <div class="score-item-label">Diseno de Software</div>
+                        <div class="competency-track" style="margin-top:0.5rem;">
+                            <div class="competency-fill" th:data-width="${nota.disenoSoftware * 100 / 300}"></div>
                         </div>
                     </div>
                 </div>

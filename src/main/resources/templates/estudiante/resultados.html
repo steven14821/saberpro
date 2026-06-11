@@ -32,7 +32,7 @@
                 </div>
                 <div class="card-body">
                     <div style="text-align:center;margin-bottom:2rem;">
-                        <div class="score-circle" th:style="'--score-percent:' + (${nota.puntajeGlobal} * 100 / 300) + '%'">
+                        <div class="score-circle" th:style="|--score-percent: ${nota.puntajeGlobal * 100 / (nota.tipoExamen == 'SABER_TYT' ? 200 : 300)}%|">
                             <span class="score-value" th:text="${nota.puntajeGlobal}">200</span>
                             <span class="score-label">de 300</span>
                         </div>
@@ -43,7 +43,7 @@
 
                     <div class="competency-bar">
                         <div class="competency-header">
-                            <span>Comunicacion Escrita <small class="text-muted" style="font-size:0.8rem;opacity:0.8;" th:text="'(' + (${#strings.containsIgnoreCase(nota.nivelComunicacionEscrita, 'Nivel')} ? nota.nivelComunicacionEscrita : 'Nivel ' + nota.nivelComunicacionEscrita) + ')'"></small></span>
+                            <span>Comunicacion Escrita <small class="text-muted" style="font-size:0.8rem;opacity:0.8;" th:text="|(${#strings.containsIgnoreCase(nota.nivelComunicacionEscrita, 'Nivel') ? nota.nivelComunicacionEscrita : 'Nivel ' + nota.nivelComunicacionEscrita})|"></small></span>
                             <strong th:text="${nota.comunicacionEscrita} + '/300'">250/300</strong>
                         </div>
                         <div class="competency-track">
@@ -53,7 +53,7 @@
 
                     <div class="competency-bar">
                         <div class="competency-header">
-                            <span>Razonamiento Cuantitativo <small class="text-muted" style="font-size:0.8rem;opacity:0.8;" th:text="'(' + (${#strings.containsIgnoreCase(nota.nivelRazonamientoCuantitativo, 'Nivel')} ? nota.nivelRazonamientoCuantitativo : 'Nivel ' + nota.nivelRazonamientoCuantitativo) + ')'"></small></span>
+                            <span>Razonamiento Cuantitativo <small class="text-muted" style="font-size:0.8rem;opacity:0.8;" th:text="|(${#strings.containsIgnoreCase(nota.nivelRazonamientoCuantitativo, 'Nivel') ? nota.nivelRazonamientoCuantitativo : 'Nivel ' + nota.nivelRazonamientoCuantitativo})|"></small></span>
                             <strong th:text="${nota.razonamientoCuantitativo} + '/300'">250/300</strong>
                         </div>
                         <div class="competency-track">
@@ -63,7 +63,7 @@
 
                     <div class="competency-bar">
                         <div class="competency-header">
-                            <span>Lectura Critica <small class="text-muted" style="font-size:0.8rem;opacity:0.8;" th:text="'(' + (${#strings.containsIgnoreCase(nota.nivelLecturaCritica, 'Nivel')} ? nota.nivelLecturaCritica : 'Nivel ' + nota.nivelLecturaCritica) + ')'"></small></span>
+                            <span>Lectura Critica <small class="text-muted" style="font-size:0.8rem;opacity:0.8;" th:text="|(${#strings.containsIgnoreCase(nota.nivelLecturaCritica, 'Nivel') ? nota.nivelLecturaCritica : 'Nivel ' + nota.nivelLecturaCritica})|"></small></span>
                             <strong th:text="${nota.lecturaCritica} + '/300'">250/300</strong>
                         </div>
                         <div class="competency-track">
@@ -73,7 +73,7 @@
 
                     <div class="competency-bar">
                         <div class="competency-header">
-                            <span>Competencias Ciudadanas <small class="text-muted" style="font-size:0.8rem;opacity:0.8;" th:text="'(' + (${#strings.containsIgnoreCase(nota.nivelCompetenciasCiudadanas, 'Nivel')} ? nota.nivelCompetenciasCiudadanas : 'Nivel ' + nota.nivelCompetenciasCiudadanas) + ')'"></small></span>
+                            <span>Competencias Ciudadanas <small class="text-muted" style="font-size:0.8rem;opacity:0.8;" th:text="|(${#strings.containsIgnoreCase(nota.nivelCompetenciasCiudadanas, 'Nivel') ? nota.nivelCompetenciasCiudadanas : 'Nivel ' + nota.nivelCompetenciasCiudadanas})|"></small></span>
                             <strong th:text="${nota.competenciasCiudadanas} + '/300'">250/300</strong>
                         </div>
                         <div class="competency-track">
@@ -83,7 +83,7 @@
 
                     <div class="competency-bar">
                         <div class="competency-header">
-                            <span>Ingles <small class="text-muted" style="font-size:0.8rem;opacity:0.8;" th:text="'(' + (${#strings.containsIgnoreCase(nota.nivelIngles, 'Nivel')} ? nota.nivelIngles : 'Nivel ' + nota.nivelIngles) + ' / CEFR: ' + nota.nivelInglesCefr + ')'"></small></span>
+                            <span>Ingles <small class="text-muted" style="font-size:0.8rem;opacity:0.8;" th:text="|(${#strings.containsIgnoreCase(nota.nivelIngles, 'Nivel') ? nota.nivelIngles : 'Nivel ' + nota.nivelIngles} / CEFR: ${nota.nivelInglesCefr})|"></small></span>
                             <strong th:text="${nota.ingles} + '/300'">250/300</strong>
                         </div>
                         <div class="competency-track">
@@ -93,7 +93,7 @@
 
                     <div class="competency-bar">
                         <div class="competency-header" th:if="${nota.tipoExamen == 'SABER_PRO'}">
-                            <span>Formulacion de Proyectos de Ingenieria <small class="text-muted" style="font-size:0.8rem;opacity:0.8;" th:text="'(' + (${#strings.containsIgnoreCase(nota.nivelFormulacionProyectos, 'Nivel')} ? nota.nivelFormulacionProyectos : 'Nivel ' + nota.nivelFormulacionProyectos) + ')'"></small></span>
+                            <span>Formulacion de Proyectos de Ingenieria <small class="text-muted" style="font-size:0.8rem;opacity:0.8;" th:text="|(${#strings.containsIgnoreCase(nota.nivelFormulacionProyectos, 'Nivel') ? nota.nivelFormulacionProyectos : 'Nivel ' + nota.nivelFormulacionProyectos})|"></small></span>
                             <strong th:text="${nota.formulacionProyectos} + '/300'">250/300</strong>
                         </div>
                         <div class="competency-track" th:if="${nota.tipoExamen == 'SABER_PRO'}">
@@ -103,7 +103,7 @@
 
                     <div class="competency-bar">
                         <div class="competency-header" th:if="${nota.tipoExamen == 'SABER_PRO'}">
-                            <span>Pensamiento Cientifico - Matematica y Estadistica <small class="text-muted" style="font-size:0.8rem;opacity:0.8;" th:text="'(' + (${#strings.containsIgnoreCase(nota.nivelPensamientoCientifico, 'Nivel')} ? nota.nivelPensamientoCientifico : 'Nivel ' + nota.nivelPensamientoCientifico) + ')'"></small></span>
+                            <span>Pensamiento Cientifico - Matematica y Estadistica <small class="text-muted" style="font-size:0.8rem;opacity:0.8;" th:text="|(${#strings.containsIgnoreCase(nota.nivelPensamientoCientifico, 'Nivel') ? nota.nivelPensamientoCientifico : 'Nivel ' + nota.nivelPensamientoCientifico})|"></small></span>
                             <strong th:text="${nota.pensamientoCientifico} + '/300'">250/300</strong>
                         </div>
                         <div class="competency-track" th:if="${nota.tipoExamen == 'SABER_PRO'}">
@@ -113,7 +113,7 @@
 
                     <div class="competency-bar">
                         <div class="competency-header" th:if="${nota.tipoExamen == 'SABER_PRO'}">
-                            <span>Diseno de Software <small class="text-muted" style="font-size:0.8rem;opacity:0.8;" th:text="'(' + (${#strings.containsIgnoreCase(nota.nivelDisenoSoftware, 'Nivel')} ? nota.nivelDisenoSoftware : 'Nivel ' + nota.nivelDisenoSoftware) + ')'"></small></span>
+                            <span>Diseno de Software <small class="text-muted" style="font-size:0.8rem;opacity:0.8;" th:text="|(${#strings.containsIgnoreCase(nota.nivelDisenoSoftware, 'Nivel') ? nota.nivelDisenoSoftware : 'Nivel ' + nota.nivelDisenoSoftware})|"></small></span>
                             <strong th:text="${nota.disenoSoftware} + '/300'">250/300</strong>
                         </div>
                         <div class="competency-track" th:if="${nota.tipoExamen == 'SABER_PRO'}">

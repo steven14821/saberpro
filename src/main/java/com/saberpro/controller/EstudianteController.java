@@ -149,20 +149,7 @@ public class EstudianteController {
         return "estudiante/resultados";
     }
 
-    // ==================== ESTADISTICAS FACULTAD ====================
-    @GetMapping("/estadisticas")
-    public String verEstadisticas(Authentication auth, Model model) {
-        Long facultadId = getFacultadIdFromAuth(auth);
-        if (facultadId != null) {
-            Object[] estadisticas = notaRepository.calcularEstadisticasByFacultad(facultadId);
-            if (estadisticas != null && estadisticas.length > 0 && estadisticas[0] != null) {
-                model.addAttribute("promedio", estadisticas[0]);
-                model.addAttribute("maximo", estadisticas[1]);
-                model.addAttribute("minimo", estadisticas[2]);
-            }
-        }
-        return "estudiante/estadisticas";
-    }
+
 
     // ==================== RESOLUCIONES ====================
     @GetMapping("/resoluciones")
