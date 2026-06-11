@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' - Saber Pro'">Saber Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Sidebar Fragment -->
+    <aside th:fragment="sidebar" class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">SP</div>
+            <span class="logo-text">Saber Pro</span>
+        </div>
+
+        <!-- Admin Menu -->
+        <ul sec:authorize="hasRole('ADMIN')" class="sidebar-menu">
+            <li><a th:href="@{/admin/dashboard}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a th:href="@{/admin/facultades}"><i class="fas fa-university"></i> Facultades</a></li>
+            <li><a th:href="@{/admin/docentes}"><i class="fas fa-chalkboard-teacher"></i> Docentes</a></li>
+            <li><a th:href="@{/admin/directores}"><i class="fas fa-user-tie"></i> Directores</a></li>
+            <li><a th:href="@{/admin/resoluciones}"><i class="fas fa-file-alt"></i> Resoluciones</a></li>
+        </ul>
+
+        <!-- Coordinador Menu -->
+        <ul sec:authorize="hasRole('COORDINADOR')" class="sidebar-menu">
+            <li><a th:href="@{/coordinador/dashboard}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a th:href="@{/coordinador/alumnos}"><i class="fas fa-user-graduate"></i> Alumnos</a></li>
+            <li><a th:href="@{/coordinador/pagos}"><i class="fas fa-money-check-alt"></i> Pagos Pendientes</a></li>
+            <li><a th:href="@{/coordinador/notas}"><i class="fas fa-chart-bar"></i> Registro de Notas</a></li>
+            <li><a th:href="@{/coordinador/informe-beneficios}"><i class="fas fa-file-invoice"></i> Informe Beneficios</a></li>
+            <li><a th:href="@{/coordinador/informe-general}"><i class="fas fa-list-alt"></i> Informe General</a></li>
+        </ul>
+
+        <!-- Docente Menu -->
+        <ul sec:authorize="hasRole('DOCENTE')" class="sidebar-menu">
+            <li><a th:href="@{/docente/dashboard}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a th:href="@{/docente/alumnos}"><i class="fas fa-user-graduate"></i> Alumnos</a></li>
+        </ul>
+
+        <!-- Estudiante Menu -->
+        <ul sec:authorize="hasRole('ESTUDIANTE')" class="sidebar-menu">
+            <li><a th:href="@{/estudiante/dashboard}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a th:href="@{/estudiante/comprobante}"><i class="fas fa-upload"></i> Comprobante</a></li>
+            <li><a th:href="@{/estudiante/resultados}"><i class="fas fa-chart-line"></i> Mis Resultados</a></li>
+            <li><a th:href="@{/estudiante/estadisticas}"><i class="fas fa-chart-pie"></i> Estadisticas</a></li>
+            <li><a th:href="@{/estudiante/resoluciones}"><i class="fas fa-file-alt"></i> Resoluciones</a></li>
+        </ul>
+
+        <hr class="sidebar-divider">
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user" style="color:white; font-size:1.1rem;"></i>
+                </div>
+                <div class="user-details">
+                    <div class="user-name" th:text="${#authentication.principal instanceof T(com.saberpro.config.CustomUserDetails) ? #authentication.principal.nombre : #authentication.name}">Usuario</div>
+                    <div class="user-role" th:text="${#authentication.principal instanceof T(com.saberpro.config.CustomUserDetails) ? #authentication.principal.realRol : (#strings.startsWith(#authentication.authorities[0].authority, 'ROLE_') ? #strings.substring(#authentication.authorities[0].authority, 5) : #authentication.authorities[0].authority)}">Rol</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Top Header Fragment -->
+    <header th:fragment="topheader" class="top-header">
+        <div style="display:flex;align-items:center;gap:1rem;">
+            <h1 class="page-title" th:text="${pageTitle}">Dashboard</h1>
+        </div>
+        <div class="header-actions">
+            <a th:href="@{/logout}" class="btn btn-danger btn-sm"><i class="fas fa-sign-out-alt"></i> Cerrar Sesion</a>
+        </div>
+    </header>
+
+    <!-- Alert Fragment -->
+    <div th:fragment="alerts">
+        <div th:if="${success}" class="alert alert-success fade-in">
+            <i class="fas fa-check-circle"></i>
+            <span th:text="${success}">Operacion exitosa</span>
+        </div>
+        <div th:if="${error}" class="alert alert-danger fade-in">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:text="${error}">Error</span>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div th:fragment="main(content)">
+        <div th:replace="~{fragments/layout :: sidebar}"></div>
+        <div class="main-content">
+            <div th:replace="~{fragments/layout :: topheader}"></div>
+            <div class="content-area">
+                <div th:replace="~{fragments/layout :: alerts}"></div>
+                <div th:replace="${content}"></div>
+            </div>
+        </div>
+        <script th:src="@{/js/main.js}"></script>
+    </div>
+</body>
+</html>

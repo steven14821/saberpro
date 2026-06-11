@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Resoluciones')}"></head>
+<body>
+    <div th:replace="~{fragments/layout :: main(~{::section})}">
+        <section th:fragment="section">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-file-alt"></i> Resoluciones de Beneficios</span>
+                <button class="btn btn-primary" onclick="openModal('resolucionModal')">
+                    <i class="fas fa-plus"></i> Nueva Resolucion
+                </button>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/admin/resoluciones}" method="get" class="filter-bar">
+                    <div class="form-group">
+                        <label class="form-label">Filtrar por Facultad</label>
+                        <select name="facultadId" class="form-control" onchange="this.form.submit()">
+                            <option value="">Todas las facultades</option>
+                            <option th:each="f : ${facultades}" th:value="${f.id}" th:text="${f.nombre}" th:selected="${facultadFiltro == f.id}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex:0;">
+                        <a th:href="@{/admin/resoluciones}" class="btn btn-secondary"><i class="fas fa-sync"></i></a>
+                    </div>
+                </form>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Numero</th>
+                                <th>Fecha</th>
+                                <th>Vigencia</th>
+                                <th>Programa</th>
+                                <th>Facultad</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="r : ${resoluciones}">
+                                <td th:text="${r.numero}">001-2024</td>
+                                <td th:text="${r.fecha}">2024-01-15</td>
+                                <td th:text="${r.vigencia}">2024-12-31</td>
+                                <td th:text="${r.programa}">Ingenieria de Sistemas</td>
+                                <td th:text="${r.facultad != null ? r.facultad.nombre : 'N/A'}">Ingenieria</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a th:href="@{/admin/resoluciones/editar/{id}(id=${r.id})}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                        <a th:href="@{/admin/resoluciones/eliminar/{id}(id=${r.id})}" class="btn btn-danger btn-sm btn-delete-confirm"><i class="fas fa-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(resoluciones)}">
+                                <td colspan="6" class="empty-state">
+                                    <div class="empty-state-icon"><i class="fas fa-file-alt"></i></div>
+                                    <h3>No hay resoluciones registradas</h3>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="resolucionModal" style="display:none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title" th:text="${resolucion.id} ? 'Editar Resolucion' : 'Nueva Resolucion'">Nueva Resolucion</span>
+                    <button class="modal-close" onclick="closeModal('resolucionModal')">&times;</button>
+                </div>
+                <form th:action="@{/admin/resoluciones/guardar}" th:object="${resolucion}" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" th:field="*{id}">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Numero *</label>
+                                <input type="text" class="form-control" th:field="*{numero}" required>
+                                <span class="field-error" th:if="${#fields.hasErrors('numero')}" th:errors="*{numero}"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Fecha *</label>
+                                <input type="date" class="form-control" th:field="*{fecha}" required>
+                                <span class="field-error" th:if="${#fields.hasErrors('fecha')}" th:errors="*{fecha}"></span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Vigencia *</label>
+                                <input type="date" class="form-control" th:field="*{vigencia}" required>
+                                <span class="field-error" th:if="${#fields.hasErrors('vigencia')}" th:errors="*{vigencia}"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Programa *</label>
+                                <input type="text" class="form-control" th:field="*{programa}" required>
+                                <span class="field-error" th:if="${#fields.hasErrors('programa')}" th:errors="*{programa}"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Facultad *</label>
+                            <select class="form-control" th:field="*{facultad.id}" required>
+                                <option value="">Seleccione...</option>
+                                <option th:each="f : ${facultades}" th:value="${f.id}" th:text="${f.nombre}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Descripcion *</label>
+                            <textarea class="form-control" th:field="*{descripcion}" required rows="3"></textarea>
+                            <span class="field-error" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('resolucionModal')">Cancelar</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script th:if="${resolucion.id != null}">
+            document.addEventListener('DOMContentLoaded', function() { openModal('resolucionModal'); });
+        </script>
+    </section>
+    </div>
+</body>
+</html>
+

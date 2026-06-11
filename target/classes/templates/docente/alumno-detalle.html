@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Detalle Alumno')}"></head>
+<body>
+    <div th:replace="~{fragments/layout :: main(~{::section})}">
+        <section th:fragment="section">
+        <a th:href="@{/docente/alumnos}" class="btn btn-secondary" style="margin-bottom:1rem;">
+            <i class="fas fa-arrow-left"></i> Volver al listado
+        </a>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-user"></i> Informacion del Alumno</span>
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" class="form-control" th:value="${alumno.nombre}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cedula</label>
+                        <input type="text" class="form-control" th:value="${alumno.cedula}" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Codigo</label>
+                        <input type="text" class="form-control" th:value="${alumno.codigo}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Programa</label>
+                        <input type="text" class="form-control" th:value="${alumno.programa}" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Semestre</label>
+                        <input type="text" class="form-control" th:value="${alumno.semestre}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Correo</label>
+                        <input type="text" class="form-control" th:value="${alumno.correo}" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Facultad</label>
+                        <input type="text" class="form-control" th:value="${alumno.facultad != null ? alumno.facultad.nombre : 'N/A'}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <input type="text" class="form-control" th:value="${alumno.estado}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" th:if="${nota != null}">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-chart-bar"></i> Resultados Saber Pro</span>
+            </div>
+            <div class="card-body">
+                <div style="text-align:center;margin-bottom:2rem;">
+                    <div class="score-circle" th:style="'--score-percent:' + (${nota.getPuntajeGlobal()} * 100 / 1800) + '%'">
+                        <span class="score-value" th:text="${nota.getPuntajeGlobal()}">1500</span>
+                        <span class="score-label">Puntaje Global</span>
+                    </div>
+                    <h3 style="margin-top:1rem;color:var(--dark);" th:text="${nota.getNivelDesempeno()}">Nivel 4 - Avanzado</h3>
+                </div>
+
+                <div class="score-grid">
+                    <div class="score-item">
+                        <div class="score-item-value" th:text="${nota.comunicacionEscrita}">250</div>
+                        <div class="score-item-label">Comunicacion Escrita</div>
+                        <div class="competency-track" style="margin-top:0.5rem;">
+                            <div class="competency-fill" th:data-width="${nota.comunicacionEscrita * 100 / 300}"></div>
+                        </div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-item-value" th:text="${nota.razonamientoCuantitativo}">250</div>
+                        <div class="score-item-label">Raz. Cuantitativo</div>
+                        <div class="competency-track" style="margin-top:0.5rem;">
+                            <div class="competency-fill" th:data-width="${nota.razonamientoCuantitativo * 100 / 300}"></div>
+                        </div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-item-value" th:text="${nota.lecturaCritica}">250</div>
+                        <div class="score-item-label">Lectura Critica</div>
+                        <div class="competency-track" style="margin-top:0.5rem;">
+                            <div class="competency-fill" th:data-width="${nota.lecturaCritica * 100 / 300}"></div>
+                        </div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-item-value" th:text="${nota.competenciasCiudadanas}">250</div>
+                        <div class="score-item-label">Comp. Ciudadanas</div>
+                        <div class="competency-track" style="margin-top:0.5rem;">
+                            <div class="competency-fill" th:data-width="${nota.competenciasCiudadanas * 100 / 300}"></div>
+                        </div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-item-value" th:text="${nota.ingles}">250</div>
+                        <div class="score-item-label">Ingles</div>
+                        <div class="competency-track" style="margin-top:0.5rem;">
+                            <div class="competency-fill" th:data-width="${nota.ingles * 100 / 300}"></div>
+                        </div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-item-value" th:text="${nota.formularioEspecifico}">250</div>
+                        <div class="score-item-label">Form. Especifico</div>
+                        <div class="competency-track" style="margin-top:0.5rem;">
+                            <div class="competency-fill" th:data-width="${nota.formularioEspecifico * 100 / 300}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" th:unless="${nota != null}">
+            <div class="card-body">
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i class="fas fa-chart-bar"></i></div>
+                    <h3>Sin resultados registrados</h3>
+                    <p>El alumno aun no tiene notas registradas en el sistema</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    </div>
+</body>
+</html>
+

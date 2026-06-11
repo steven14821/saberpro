@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+<body>
+    <div th:replace="~{fragments/layout :: main(~{::section})}">
+        <section th:fragment="section">
+        <div th:if="${alumno != null and alumno.estado == 'ANULADO'}" class="alert alert-danger" style="margin-bottom:1.5rem; display:block; opacity:1; transform:none; transition:none;">
+            <i class="fas fa-ban"></i> <strong>Atención:</strong> Sus pruebas Saber Pro han sido anuladas y no presentan resultados válidos.
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-user"></i></div>
+                <div class="stat-info">
+                    <h3 th:text="${alumno != null ? alumno.nombre : 'N/A'}" style="font-size:1rem;">Nombre</h3>
+                    <p th:text="${alumno != null ? alumno.codigo : ''}">Codigo</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><i class="fas fa-money-check-alt"></i></div>
+                <div class="stat-info">
+                    <h3 th:if="${ultimoPago != null}" th:text="${ultimoPago.estado}" style="font-size:1rem;">PENDIENTE</h3>
+                    <h3 th:unless="${ultimoPago != null}">Sin Pago</h3>
+                    <p>Estado del Pago</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-info">
+                    <h3 th:if="${nota != null and nota.publicado}" th:text="${nota.getPuntajeGlobal()}" style="font-size:1.2rem;color:var(--success);">1500</h3>
+                    <h3 th:unless="${nota != null and nota.publicado}" style="font-size:1rem;">-</h3>
+                    <p>Puntaje Global</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-info-circle"></i> Mi Informacion</span>
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" class="form-control" th:value="${alumno != null ? alumno.nombre : ''}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cedula</label>
+                        <input type="text" class="form-control" th:value="${alumno != null ? alumno.cedula : ''}" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Programa</label>
+                        <input type="text" class="form-control" th:value="${alumno != null ? alumno.programa : ''}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Semestre</label>
+                        <input type="text" class="form-control" th:value="${alumno != null ? alumno.semestre : ''}" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Facultad</label>
+                        <input type="text" class="form-control" th:value="${alumno != null and alumno.facultad != null ? alumno.facultad.nombre : ''}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Correo</label>
+                        <input type="text" class="form-control" th:value="${alumno != null ? alumno.correo : ''}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid" style="margin-top:1.5rem;">
+            <a th:href="@{/estudiante/comprobante}" class="stat-card" style="text-decoration:none;color:inherit;">
+                <div class="stat-icon orange"><i class="fas fa-upload"></i></div>
+                <div class="stat-info">
+                    <h3 style="font-size:1rem;">Cargar Comprobante</h3>
+                    <p>Subir comprobante de pago</p>
+                </div>
+            </a>
+            <a th:href="@{/estudiante/resultados}" class="stat-card" style="text-decoration:none;color:inherit;">
+                <div class="stat-icon green"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-info">
+                    <h3 style="font-size:1rem;">Mis Resultados</h3>
+                    <p>Ver notas por competencia</p>
+                </div>
+            </a>
+            <a th:href="@{/estudiante/estadisticas}" class="stat-card" style="text-decoration:none;color:inherit;">
+                <div class="stat-icon purple"><i class="fas fa-chart-pie"></i></div>
+                <div class="stat-info">
+                    <h3 style="font-size:1rem;">Estadisticas</h3>
+                    <p>Resultados de mi facultad</p>
+                </div>
+            </a>
+            <a th:href="@{/estudiante/resoluciones}" class="stat-card" style="text-decoration:none;color:inherit;">
+                <div class="stat-icon blue"><i class="fas fa-file-alt"></i></div>
+                <div class="stat-info">
+                    <h3 style="font-size:1rem;">Resoluciones</h3>
+                    <p>Beneficios disponibles</p>
+                </div>
+            </a>
+        </div>
+    </section>
+    </div>
+</body>
+</html>
+

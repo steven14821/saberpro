@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+<body>
+    <div th:replace="~{fragments/layout :: main(~{::section})}">
+        <section th:fragment="section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-user-graduate"></i></div>
+                <div class="stat-info">
+                    <h3 th:text="${totalAlumnos}">0</h3>
+                    <p>Total Alumnos</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><i class="fas fa-money-check-alt"></i></div>
+                <div class="stat-info">
+                    <h3 th:text="${totalPagosPendientes}">0</h3>
+                    <p>Pagos Pendientes</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-chart-bar"></i></div>
+                <div class="stat-info">
+                    <h3 th:text="${totalNotasPublicadas}">0</h3>
+                    <p>Notas Publicadas</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple"><i class="fas fa-university"></i></div>
+                <div class="stat-info">
+                    <h3 th:text="${totalFacultades}">0</h3>
+                    <p>Facultades</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-tasks"></i> Acciones Rapidas</span>
+            </div>
+            <div class="card-body">
+                <div class="stats-grid" style="margin-bottom:0;">
+                    <a th:href="@{/coordinador/alumnos}" class="stat-card" style="text-decoration:none;color:inherit;">
+                        <div class="stat-icon blue"><i class="fas fa-user-graduate"></i></div>
+                        <div class="stat-info">
+                            <h3 style="font-size:1rem;">Gestionar Alumnos</h3>
+                            <p>CRUD completo de estudiantes</p>
+                        </div>
+                    </a>
+                    <a th:href="@{/coordinador/pagos}" class="stat-card" style="text-decoration:none;color:inherit;">
+                        <div class="stat-icon orange"><i class="fas fa-money-check-alt"></i></div>
+                        <div class="stat-info">
+                            <h3 style="font-size:1rem;">Aprobar Pagos</h3>
+                            <p>Revision de comprobantes</p>
+                        </div>
+                    </a>
+                    <a th:href="@{/coordinador/notas}" class="stat-card" style="text-decoration:none;color:inherit;">
+                        <div class="stat-icon green"><i class="fas fa-chart-bar"></i></div>
+                        <div class="stat-info">
+                            <h3 style="font-size:1rem;">Registrar Notas</h3>
+                            <p>Resultados por competencia</p>
+                        </div>
+                    </a>
+                    <a th:href="@{/coordinador/informe-beneficios}" class="stat-card" style="text-decoration:none;color:inherit;">
+                        <div class="stat-icon purple"><i class="fas fa-file-invoice"></i></div>
+                        <div class="stat-info">
+                            <h3 style="font-size:1rem;">Informe Beneficios</h3>
+                            <p>Estudiantes beneficiarios</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    </div>
+</body>
+</html>
+

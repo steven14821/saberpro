@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Resoluciones')}"></head>
+<body>
+    <div th:replace="~{fragments/layout :: main(~{::section})}">
+        <section th:fragment="section">
+        <div class="tab-nav">
+            <button class="active" data-tab="tab-vigentes"><i class="fas fa-check-circle"></i> Resoluciones Vigentes</button>
+            <button data-tab="tab-vencidas"><i class="fas fa-clock"></i> Resoluciones Vencidas</button>
+        </div>
+
+        <div>
+            <!-- Vigentes -->
+            <div id="tab-vigentes" class="tab-panel">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title"><i class="fas fa-file-alt"></i> Resoluciones Vigentes</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Numero</th>
+                                        <th>Fecha</th>
+                                        <th>Vigencia</th>
+                                        <th>Programa</th>
+                                        <th>Descripcion</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="r : ${vigentes}">
+                                        <td th:text="${r.numero}">001-2024</td>
+                                        <td th:text="${r.fecha}">2024-01-15</td>
+                                        <td th:text="${r.vigencia}">2024-12-31</td>
+                                        <td th:text="${r.programa}">Ing. Sistemas</td>
+                                        <td th:text="${r.descripcion}">Descripcion...</td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(vigentes)}">
+                                        <td colspan="5" class="empty-state">
+                                            <div class="empty-state-icon"><i class="fas fa-check-circle"></i></div>
+                                            <h3>No hay resoluciones vigentes</h3>
+                                            <p>No se encontraron resoluciones de beneficios vigentes para su facultad.</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vencidas -->
+            <div id="tab-vencidas" class="tab-panel" style="display:none;">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title"><i class="fas fa-clock"></i> Resoluciones Vencidas</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Numero</th>
+                                        <th>Fecha</th>
+                                        <th>Vigencia</th>
+                                        <th>Programa</th>
+                                        <th>Descripcion</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="r : ${vencidas}">
+                                        <td th:text="${r.numero}">001-2023</td>
+                                        <td th:text="${r.fecha}">2023-01-15</td>
+                                        <td th:text="${r.vigencia}">2023-12-31</td>
+                                        <td th:text="${r.programa}">Ing. Sistemas</td>
+                                        <td th:text="${r.descripcion}">Descripcion...</td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(vencidas)}">
+                                        <td colspan="5" class="empty-state">
+                                            <div class="empty-state-icon"><i class="fas fa-clock"></i></div>
+                                            <h3>No hay resoluciones vencidas</h3>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    </div>
+</body>
+</html>
+

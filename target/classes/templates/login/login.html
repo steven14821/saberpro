@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesion – Saber Pro UTS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: #0a1628;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2.5rem;
+            padding: 2rem;
+            flex-wrap: wrap;
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(37,99,235,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(124,58,237,0.1) 0%, transparent 50%);
+        }
+
+        /* ─── LOGIN CARD ─────────────────────────── */
+        .login-card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 2.5rem 2.2rem;
+            width: 100%;
+            max-width: 390px;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+            flex-shrink: 0;
+        }
+        .brand { text-align: center; margin-bottom: 2rem; }
+        .brand-icon {
+            width: 72px; height: 72px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            border-radius: 20px;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; color: #fff; margin-bottom: 1rem;
+            box-shadow: 0 8px 24px rgba(37,99,235,0.35);
+        }
+        .brand h1 { font-size: 1.6rem; font-weight: 800; color: #0f172a; }
+        .brand p  { font-size: 0.82rem; color: #64748b; margin-top: 0.3rem; }
+
+        .alert {
+            display: flex; align-items: center; gap: 0.5rem;
+            border-radius: 10px; padding: 0.75rem 1rem;
+            margin-bottom: 1.2rem; font-size: 0.85rem;
+        }
+        .alert-error   { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
+        .alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #16a34a; }
+
+        .field { position: relative; margin-bottom: 1rem; }
+        .field-icon {
+            position: absolute; left: 1rem; top: 50%;
+            transform: translateY(-50%); color: #94a3b8; font-size: 0.85rem; pointer-events: none;
+        }
+        .field input {
+            width: 100%; padding: 0.9rem 1rem 0.9rem 2.75rem;
+            border: 1.5px solid #e2e8f0; border-radius: 12px;
+            font-size: 0.93rem; font-family: 'Inter', sans-serif;
+            background: #f8fafc; color: #0f172a; outline: none;
+            transition: border-color .2s, box-shadow .2s, background .2s;
+        }
+        .field input:focus {
+            border-color: #2563eb; background: #fff;
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+        }
+        .field-pwd input { padding-right: 3rem; }
+        .btn-eye {
+            position: absolute; right: 0.9rem; top: 50%;
+            transform: translateY(-50%);
+            background: none; border: none; cursor: pointer;
+            color: #94a3b8; font-size: 0.9rem; padding: 0.2rem;
+            transition: color .2s;
+        }
+        .btn-eye:hover { color: #2563eb; }
+
+        .btn-submit {
+            width: 100%; padding: 0.95rem;
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: #fff; border: none; border-radius: 12px;
+            font-size: 1rem; font-weight: 700; cursor: pointer;
+            font-family: 'Inter', sans-serif; margin-top: 0.25rem;
+            box-shadow: 0 6px 20px rgba(37,99,235,0.35);
+            transition: transform .15s, box-shadow .15s;
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(37,99,235,0.45); }
+        .btn-submit:active { transform: translateY(0); }
+
+        /* ─── QUICK PANEL ────────────────────────── */
+        .quick-panel {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 1.8rem;
+            width: 100%;
+            max-width: 560px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .quick-panel::-webkit-scrollbar { width: 4px; }
+        .quick-panel::-webkit-scrollbar-track { background: transparent; }
+        .quick-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+
+        .quick-header { margin-bottom: 1.5rem; }
+        .quick-header h2 {
+            font-size: 1.05rem; font-weight: 700; color: #fff;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .quick-header p { font-size: 0.77rem; color: rgba(255,255,255,0.4); margin-top: 0.3rem; }
+
+        /* Sección por rol */
+        .rol-section { margin-bottom: 1.4rem; }
+        .rol-section:last-of-type { margin-bottom: 0; }
+
+        .rol-label {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 0.68rem; font-weight: 700; letter-spacing: 1.2px;
+            text-transform: uppercase; margin-bottom: 0.7rem; opacity: 0.85;
+        }
+        .rol-label .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+        .rol-admin       .rol-label { color: #fbbf24; }
+        .rol-admin       .dot       { background: #fbbf24; }
+        .rol-coordinador .rol-label { color: #c084fc; }
+        .rol-coordinador .dot       { background: #c084fc; }
+        .rol-docente     .rol-label { color: #38bdf8; }
+        .rol-docente     .dot       { background: #38bdf8; }
+        .rol-estudiante  .rol-label { color: #34d399; }
+        .rol-estudiante  .dot       { background: #34d399; }
+
+        /* Grid de tarjetas */
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 0.6rem;
+        }
+
+        .user-card {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 0.45rem; padding: 0.85rem 0.5rem;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px; cursor: pointer;
+            transition: background .2s, border-color .2s, transform .15s, box-shadow .2s;
+            text-align: center; user-select: none;
+        }
+        .user-card:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .user-card:active { transform: translateY(-1px); }
+        .user-card.selected {
+            border-color: rgba(255,255,255,0.45) !important;
+            background: rgba(255,255,255,0.18) !important;
+        }
+
+        .user-avatar {
+            width: 44px; height: 44px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; font-weight: 800; color: #fff;
+        }
+        .rol-admin       .user-avatar { background: linear-gradient(135deg,#d97706,#fbbf24); }
+        .rol-coordinador .user-avatar { background: linear-gradient(135deg,#7c3aed,#c084fc); }
+        .rol-docente     .user-avatar { background: linear-gradient(135deg,#0369a1,#38bdf8); }
+        .rol-estudiante  .user-avatar { background: linear-gradient(135deg,#047857,#34d399); }
+
+        .user-nombre {
+            font-size: 0.75rem; font-weight: 600; color: #fff; line-height: 1.3;
+            overflow: hidden; text-overflow: ellipsis;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            width: 100%;
+        }
+        .user-correo {
+            font-size: 0.63rem; color: rgba(255,255,255,0.38);
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            width: 100%;
+        }
+        .user-badge {
+            font-size: 0.6rem; font-weight: 600;
+            padding: 0.15rem 0.5rem; border-radius: 20px; opacity: 0.85;
+        }
+        .rol-admin       .user-badge { background: rgba(251,191,36,0.15); color: #fbbf24; }
+        .rol-coordinador .user-badge { background: rgba(192,132,252,0.15); color: #c084fc; }
+        .rol-docente     .user-badge { background: rgba(56,189,248,0.15); color: #38bdf8; }
+        .rol-estudiante  .user-badge { background: rgba(52,211,153,0.15); color: #34d399; }
+
+        .divider { height: 1px; background: rgba(255,255,255,0.07); margin: 1.2rem 0; }
+
+        .quick-footer {
+            display: flex; align-items: flex-start; gap: 0.5rem;
+            background: rgba(0,0,0,0.2); border-radius: 10px;
+            padding: 0.65rem 1rem; margin-top: 1.2rem;
+            font-size: 0.71rem; color: rgba(255,255,255,0.35); line-height: 1.6;
+        }
+        .quick-footer i { font-size: 0.85rem; color: rgba(255,255,255,0.25); margin-top: 0.1rem; flex-shrink: 0; }
+        .quick-footer strong { color: rgba(255,255,255,0.6); }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     FORMULARIO DE LOGIN
+════════════════════════════════════════ -->
+<div class="login-card">
+    <div class="brand">
+        <div class="brand-icon"><i class="fas fa-graduation-cap"></i></div>
+        <h1>Saber Pro</h1>
+        <p>Sistema de Resultados &mdash; UTS</p>
+    </div>
+
+    <div th:if="${error}"  class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${error}">Error</span>
+    </div>
+    <div th:if="${logout}" class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        <span th:text="${logout}">Sesion cerrada</span>
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <div class="field">
+            <i class="fas fa-envelope field-icon"></i>
+            <input id="correoInput" type="email" name="correo"
+                   placeholder="Correo electronico" required autofocus
+                   autocomplete="email">
+        </div>
+        <div class="field field-pwd">
+            <i class="fas fa-lock field-icon"></i>
+            <input id="passwordInput" type="password" name="password"
+                   placeholder="Contrasena" required autocomplete="current-password">
+            <button type="button" class="btn-eye" onclick="togglePassword()" tabindex="-1">
+                <i id="eyeIcon" class="fas fa-eye"></i>
+            </button>
+        </div>
+        <button type="submit" class="btn-submit">
+            <i class="fas fa-sign-in-alt"></i>&nbsp; Iniciar Sesion
+        </button>
+    </form>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PANEL DE ACCESO RAPIDO
+════════════════════════════════════════ -->
+<div class="quick-panel">
+    <div class="quick-header">
+        <h2><i class="fas fa-bolt" style="color:#fbbf24"></i> Acceso Rapido</h2>
+        <p>Haz clic en un usuario para autocompletar correo y contrasena</p>
+    </div>
+
+    <!-- ADMIN -->
+    <div class="rol-section rol-admin" th:if="${!admins.isEmpty()}">
+        <div class="rol-label">
+            <span class="dot"></span>
+            <i class="fas fa-shield-halved"></i> Administrador
+        </div>
+        <div class="users-grid">
+            <div class="user-card"
+                 th:each="u : ${admins}"
+                 th:data-correo="${u.correo}"
+                 th:data-pwd="${u.password}"
+                 onclick="fillLogin(this)">
+                <div class="user-avatar" th:text="${u.inicial}">A</div>
+                <span class="user-nombre" th:text="${u.nombre}">Nombre</span>
+                <span class="user-correo" th:text="${u.correo}">correo</span>
+                <span class="user-badge">Admin</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="divider" th:if="${!admins.isEmpty() and !coordinadores.isEmpty()}"></div>
+
+    <!-- COORDINADOR -->
+    <div class="rol-section rol-coordinador" th:if="${!coordinadores.isEmpty()}">
+        <div class="rol-label">
+            <span class="dot"></span>
+            <i class="fas fa-user-tie"></i> Coordinador
+        </div>
+        <div class="users-grid">
+            <div class="user-card"
+                 th:each="u : ${coordinadores}"
+                 th:data-correo="${u.correo}"
+                 th:data-pwd="${u.password}"
+                 onclick="fillLogin(this)">
+                <div class="user-avatar" th:text="${u.inicial}">C</div>
+                <span class="user-nombre" th:text="${u.nombre}">Nombre</span>
+                <span class="user-correo" th:text="${u.correo}">correo</span>
+                <span class="user-badge">Coordinador</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="divider" th:if="${!coordinadores.isEmpty() and !docentes.isEmpty()}"></div>
+
+    <!-- DOCENTE -->
+    <div class="rol-section rol-docente" th:if="${!docentes.isEmpty()}">
+        <div class="rol-label">
+            <span class="dot"></span>
+            <i class="fas fa-chalkboard-user"></i> Docente
+        </div>
+        <div class="users-grid">
+            <div class="user-card"
+                 th:each="u : ${docentes}"
+                 th:data-correo="${u.correo}"
+                 th:data-pwd="${u.password}"
+                 onclick="fillLogin(this)">
+                <div class="user-avatar" th:text="${u.inicial}">D</div>
+                <span class="user-nombre" th:text="${u.nombre}">Nombre</span>
+                <span class="user-correo" th:text="${u.correo}">correo</span>
+                <span class="user-badge">Docente</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="divider" th:if="${!docentes.isEmpty() and !estudiantes.isEmpty()}"></div>
+
+    <!-- ESTUDIANTE -->
+    <div class="rol-section rol-estudiante" th:if="${!estudiantes.isEmpty()}">
+        <div class="rol-label">
+            <span class="dot"></span>
+            <i class="fas fa-user-graduate"></i> Estudiante
+        </div>
+        <div class="users-grid">
+            <div class="user-card"
+                 th:each="u : ${estudiantes}"
+                 th:data-correo="${u.correo}"
+                 th:data-pwd="${u.password}"
+                 onclick="fillLogin(this)">
+                <div class="user-avatar" th:text="${u.inicial}">E</div>
+                <span class="user-nombre" th:text="${u.nombre}">Nombre</span>
+                <span class="user-correo" th:text="${u.correo}">correo</span>
+                <span class="user-badge">Estudiante</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="quick-footer">
+        <i class="fas fa-info-circle"></i>
+        <span>
+            La contrasena sigue siendo <strong>primer nombre en minuscula + cedula</strong>
+            &nbsp;(ej: <strong>juan10200001</strong>)<br>
+            Al hacer clic en una tarjeta se autocompletan ambos campos.
+        </span>
+    </div>
+</div>
+
+<script>
+    let selectedCard = null;
+
+    function fillLogin(card) {
+        const correo = card.getAttribute('data-correo');
+        const pwd    = card.getAttribute('data-pwd');
+
+        document.getElementById('correoInput').value   = correo || '';
+        document.getElementById('passwordInput').value = pwd    || '';
+
+        // Resaltar tarjeta seleccionada
+        if (selectedCard) selectedCard.classList.remove('selected');
+        card.classList.add('selected');
+        selectedCard = card;
+
+        // Enfocar boton de submit para que el usuario solo presione Enter
+        document.querySelector('.btn-submit').focus();
+    }
+
+    function togglePassword() {
+        const input = document.getElementById('passwordInput');
+        const icon  = document.getElementById('eyeIcon');
+        if (input.type === 'password') {
+            input.type    = 'text';
+            icon.className = 'fas fa-eye-slash';
+        } else {
+            input.type    = 'password';
+            icon.className = 'fas fa-eye';
+        }
+    }
+</script>
+</body>
+</html>

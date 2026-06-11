@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Docentes')}"></head>
+<body>
+    <div th:replace="~{fragments/layout :: main(~{::section})}">
+        <section th:fragment="section">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-chalkboard-teacher"></i> Directorio de Docentes</span>
+                <button class="btn btn-primary" onclick="openModal('docenteModal')">
+                    <i class="fas fa-plus"></i> Nuevo Docente
+                </button>
+            </div>
+            <div class="card-body">
+                <!-- Filter Bar -->
+                <form th:action="@{/admin/docentes}" method="get" class="filter-bar">
+                    <div class="form-group">
+                        <label class="form-label">Filtrar por Facultad</label>
+                        <select name="facultadId" class="form-control" onchange="this.form.submit()">
+                            <option value="">Todas las facultades</option>
+                            <option th:each="f : ${facultades}" th:value="${f.id}" th:text="${f.nombre}" th:selected="${facultadFiltro == f.id}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex:0;">
+                        <a th:href="@{/admin/docentes}" class="btn btn-secondary"><i class="fas fa-sync"></i></a>
+                    </div>
+                </form>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Cedula</th>
+                                <th>Correo</th>
+                                <th>Facultad</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="d : ${docentes}">
+                                <td th:text="${d.id}">1</td>
+                                <td th:text="${d.nombre}">Juan Perez</td>
+                                <td th:text="${d.cedula}">12345678</td>
+                                <td th:text="${d.correo}">juan@mail.com</td>
+                                <td th:text="${d.facultad != null ? d.facultad.nombre : 'N/A'}">Ingenieria</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a th:href="@{/admin/docentes/editar/{id}(id=${d.id})}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                        <a th:href="@{/admin/docentes/eliminar/{id}(id=${d.id})}" class="btn btn-danger btn-sm btn-delete-confirm"><i class="fas fa-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(docentes)}">
+                                <td colspan="6" class="empty-state">
+                                    <div class="empty-state-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                                    <h3>No hay docentes registrados</h3>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal-overlay" id="docenteModal" style="display:none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title" th:text="${docente.id} ? 'Editar Docente' : 'Nuevo Docente'">Nuevo Docente</span>
+                    <button class="modal-close" onclick="closeModal('docenteModal')">&times;</button>
+                </div>
+                <form th:action="@{/admin/docentes/guardar}" th:object="${docente}" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" th:field="*{id}">
+                        <div class="form-group">
+                            <label class="form-label">Nombre *</label>
+                            <input type="text" class="form-control" th:field="*{nombre}" required>
+                            <span class="field-error" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Cedula *</label>
+                            <input type="text" class="form-control" th:field="*{cedula}" required>
+                            <span class="field-error" th:if="${#fields.hasErrors('cedula')}" th:errors="*{cedula}"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Correo *</label>
+                            <input type="email" class="form-control" th:field="*{correo}" required>
+                            <span class="field-error" th:if="${#fields.hasErrors('correo')}" th:errors="*{correo}"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Facultad *</label>
+                            <select class="form-control" th:field="*{facultad.id}" required>
+                                <option value="">Seleccione...</option>
+                                <option th:each="f : ${facultades}" th:value="${f.id}" th:text="${f.nombre}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('docenteModal')">Cancelar</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script th:if="${docente.id != null}">
+            document.addEventListener('DOMContentLoaded', function() { openModal('docenteModal'); });
+        </script>
+    </section>
+    </div>
+</body>
+</html>
+
