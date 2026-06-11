@@ -38,6 +38,8 @@ public class CoordinadorController {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private ResolucionRepository resolucionRepository;
 
     @ModelAttribute("pageTitle")
     public String getPageTitle() {
@@ -398,6 +400,7 @@ public class CoordinadorController {
     public String listarNotas(Model model) {
         List<Nota> notas = notaRepository.findAll().stream()
                 .filter(n -> n.getAlumno() != null && !"ANULADO".equals(n.getAlumno().getEstado()))
+                .sorted((n1, n2) -> Integer.compare(n2.getPuntajeGlobal(), n1.getPuntajeGlobal()))
                 .toList();
         List<Long> alumnosConNota = notas.stream().map(n -> n.getAlumno().getId()).toList();
         List<Alumno> alumnosSinNota = alumnoRepository.findByEstado("ACTIVO").stream()
@@ -415,14 +418,15 @@ public class CoordinadorController {
                               @RequestParam Long alumnoId,
                               RedirectAttributes redirect, Model model) {
         if (result.hasErrors()) {
-            List<Nota> notas = notaRepository.findAll().stream()
+            List<Nota> sortedNotas = notaRepository.findAll().stream()
                     .filter(n -> n.getAlumno() != null && !"ANULADO".equals(n.getAlumno().getEstado()))
+                    .sorted((n1, n2) -> Integer.compare(n2.getPuntajeGlobal(), n1.getPuntajeGlobal()))
                     .toList();
-            List<Long> alumnosConNota = notas.stream().map(n -> n.getAlumno().getId()).toList();
+            List<Long> alumnosConNota = sortedNotas.stream().map(n -> n.getAlumno().getId()).toList();
             List<Alumno> alumnosSinNota = alumnoRepository.findByEstado("ACTIVO").stream()
                     .filter(a -> !alumnosConNota.contains(a.getId()))
                     .toList();
-            model.addAttribute("notas", notas);
+            model.addAttribute("notas", sortedNotas);
             model.addAttribute("alumnos", alumnosSinNota);
             return "coordinador/notas";
         }
@@ -448,6 +452,7 @@ public class CoordinadorController {
         Nota nota = notaRepository.findById(id).orElseThrow();
         List<Nota> notas = notaRepository.findAll().stream()
                 .filter(n -> n.getAlumno() != null && !"ANULADO".equals(n.getAlumno().getEstado()))
+                .sorted((n1, n2) -> Integer.compare(n2.getPuntajeGlobal(), n1.getPuntajeGlobal()))
                 .toList();
         model.addAttribute("nota", nota);
         model.addAttribute("notas", notas);
@@ -488,5 +493,16 @@ public class CoordinadorController {
                 .toList();
         model.addAttribute("notas", notasValidas);
         return "coordinador/informe-general";
+    }
+
+    // ==================== RESOLUCIONES ====================
+    @GetMapping("/resoluciones")
+    public String listarResoluciones(@RequestParam(required = false) Long facultadId, Model model) {
+        List<Resolucion> resoluciones = facultadId != null ?
+                resolucionRepository.findByFacultadId(facultadId) : resolucionRepository.findAll();
+        model.addAttribute("resoluciones", resoluciones);
+        model.addAttribute("facultades", facultadRepository.findAll());
+        model.addAttribute("facultadFiltro", facultadId);
+        return "coordinador/resoluciones";
     }
 }
