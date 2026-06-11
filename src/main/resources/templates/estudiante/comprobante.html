@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Comprobante de Pago')}"></head>
+<body>
+    <div th:replace="~{fragments/layout :: main(~{::section})}">
+        <section th:fragment="section">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-upload"></i> Cargar Comprobante de Pago</span>
+            </div>
+            <div class="card-body">
+                <div th:if="${ultimoPago != null}" style="margin-bottom:1.5rem;padding:1rem;background:var(--light-gray);border-radius:var(--border-radius);">
+                    <h4 style="font-size:0.9rem;margin-bottom:0.75rem;">Ultimo comprobante registrado</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Archivo</label>
+                            <p><i class="fas fa-file"></i> <span th:text="${ultimoPago.nombreArchivo}">archivo.pdf</span></p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fecha</label>
+                            <p th:text="${#temporals.format(ultimoPago.fechaRegistro, 'dd/MM/yyyy HH:mm')}">01/01/2024</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Estado</label>
+                            <p>
+                                <span th:if="${ultimoPago.estado == 'PENDIENTE'}" class="badge badge-pendiente"><i class="fas fa-clock"></i> PENDIENTE</span>
+                                <span th:if="${ultimoPago.estado == 'APROBADO'}" class="badge badge-aprobado"><i class="fas fa-check"></i> APROBADO</span>
+                                <span th:if="${ultimoPago.estado == 'RECHAZADO'}" class="badge badge-rechazado"><i class="fas fa-times"></i> RECHAZADO</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div th:if="${ultimoPago.motivoRechazo != null}" class="alert alert-danger" style="margin-top:0.5rem;">
+                        <strong>Motivo de rechazo:</strong> <span th:text="${ultimoPago.motivoRechazo}"></span>
+                    </div>
+                    <a th:href="@{/estudiante/comprobante/descargar/{id}(id=${ultimoPago.id})}" class="btn btn-secondary btn-sm" target="_blank">
+                        <i class="fas fa-download"></i> Descargar Archivo
+                    </a>
+                </div>
+
+                <div th:if="${ultimoPago == null or ultimoPago.estado != 'PENDIENTE'}">
+                    <form th:action="@{/estudiante/comprobante/subir}" method="post" enctype="multipart/form-data">
+                        <div class="file-upload-zone" onclick="document.getElementById('archivo').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Haga clic o arrastre aqui para subir el archivo</p>
+                            <p style="font-size:0.75rem;color:var(--gray);">Formatos permitidos: PDF, JPG, PNG (max. 10MB)</p>
+                        </div>
+                        <input type="file" id="archivo" name="archivo" class="file-upload-input" style="display:none;"
+                               accept=".pdf,.jpg,.jpeg,.png" data-preview="filePreview" required>
+                        <p id="filePreview" style="margin-top:0.75rem;text-align:center;color:var(--gray);font-size:0.85rem;">Ningun archivo seleccionado</p>
+
+                        <div style="text-align:center;margin-top:1.5rem;">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-upload"></i> Subir Comprobante</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div th:if="${ultimoPago != null and ultimoPago.estado == 'PENDIENTE'}" class="alert alert-info" style="margin-top:1rem;">
+                    <i class="fas fa-info-circle"></i> Su comprobante esta pendiente de revision. No puede cargar un nuevo comprobante hasta que el coordinador revise el actual.
+                </div>
+            </div>
+        </div>
+    </section>
+    </div>
+</body>
+</html>
+

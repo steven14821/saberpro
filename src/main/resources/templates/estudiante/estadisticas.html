@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Estadisticas')}"></head>
+<body>
+    <div th:replace="~{fragments/layout :: main(~{::section})}">
+        <section th:fragment="section">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-chart-pie"></i> Estadisticas de mi Facultad</span>
+            </div>
+            <div class="card-body">
+                <div th:if="${promedio != null}" class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-calculator"></i></div>
+                        <div class="stat-info">
+                            <h3 th:text="${#numbers.formatDecimal(promedio, 0, 1)}">1250.5</h3>
+                            <p>Puntaje Promedio</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fas fa-arrow-up"></i></div>
+                        <div class="stat-info">
+                            <h3 th:text="${maximo}">1800</h3>
+                            <p>Puntaje Maximo</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red"><i class="fas fa-arrow-down"></i></div>
+                        <div class="stat-info">
+                            <h3 th:text="${minimo}">800</h3>
+                            <p>Puntaje Minimo</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:unless="${promedio != null}" class="empty-state">
+                    <div class="empty-state-icon"><i class="fas fa-chart-pie"></i></div>
+                    <h3>No hay estadisticas disponibles</h3>
+                    <p>Aun no se han publicado resultados suficientes para calcular estadisticas de su facultad.</p>
+                </div>
+
+                <div th:if="${promedio != null}" style="margin-top:2rem;padding:1.5rem;background:var(--light-gray);border-radius:var(--border-radius);text-align:center;">
+                    <i class="fas fa-info-circle" style="font-size:2rem;color:var(--primary);margin-bottom:0.75rem;"></i>
+                    <p style="color:var(--gray);font-size:0.9rem;">
+                        Estas estadisticas son calculadas a partir de los puntajes globales publicados de todos los estudiantes de su facultad.
+                        No se muestran nombres ni datos personales de terceros.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    </div>
+</body>
+</html>
+

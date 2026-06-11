@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Registro de Notas')}"></head>
+<body>
+    <div th:replace="~{fragments/layout :: main(~{::section})}">
+        <section th:fragment="section">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-chart-bar"></i> Registro de Notas Saber Pro</span>
+                <button class="btn btn-primary" onclick="openModal('notaModal')">
+                    <i class="fas fa-plus"></i> Nueva Nota
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-container" style="overflow-x: auto; white-space: nowrap;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Alumno</th>
+                                <th>Global</th>
+                                <th>Saber Pro Nivel</th>
+                                <th>Com. Escrita</th>
+                                <th>Raz. Cuantitativo</th>
+                                <th>Lectura Critica</th>
+                                <th>Comp. Ciudadanas</th>
+                                <th>Ingles</th>
+                                <th>Form. Proyectos</th>
+                                <th>Pens. Cientifico</th>
+                                <th>Diseno Software</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="n : ${notas}">
+                                <td th:text="${n.alumno != null ? n.alumno.nombre : 'N/A'}">Juan Perez</td>
+                                <td><strong th:text="${n.puntajeGlobal}">200</strong></td>
+                                <td><span class="badge badge-info" th:text="${n.nivelSaberPro}">Nivel 4</span></td>
+                                <td>
+                                    <span th:text="${n.comunicacionEscrita}">250</span>
+                                    <small style="color:#666;" th:text="'(' + (${#strings.containsIgnoreCase(n.nivelComunicacionEscrita, 'Nivel')} ? ${n.nivelComunicacionEscrita} : 'Nivel ' + ${n.nivelComunicacionEscrita}) + ')'">Nivel 2</small>
+                                </td>
+                                <td>
+                                    <span th:text="${n.razonamientoCuantitativo}">250</span>
+                                    <small style="color:#666;" th:text="'(' + (${#strings.containsIgnoreCase(n.nivelRazonamientoCuantitativo, 'Nivel')} ? ${n.nivelRazonamientoCuantitativo} : 'Nivel ' + ${n.nivelRazonamientoCuantitativo}) + ')'">Nivel 2</small>
+                                </td>
+                                <td>
+                                    <span th:text="${n.lecturaCritica}">250</span>
+                                    <small style="color:#666;" th:text="'(' + (${#strings.containsIgnoreCase(n.nivelLecturaCritica, 'Nivel')} ? ${n.nivelLecturaCritica} : 'Nivel ' + ${n.nivelLecturaCritica}) + ')'">Nivel 2</small>
+                                </td>
+                                <td>
+                                    <span th:text="${n.competenciasCiudadanas}">250</span>
+                                    <small style="color:#666;" th:text="'(' + (${#strings.containsIgnoreCase(n.nivelCompetenciasCiudadanas, 'Nivel')} ? ${n.nivelCompetenciasCiudadanas} : 'Nivel ' + ${n.nivelCompetenciasCiudadanas}) + ')'">Nivel 2</small>
+                                </td>
+                                <td>
+                                    <span th:text="${n.ingles}">250</span>
+                                    <small style="color:#666;" th:text="'(' + (${#strings.containsIgnoreCase(n.nivelIngles, 'Nivel')} ? ${n.nivelIngles} : 'Nivel ' + ${n.nivelIngles}) + ' - ' + ${n.nivelInglesCefr} + ')'">Nivel 2 - A2</small>
+                                </td>
+                                <td>
+                                    <span th:text="${n.formulacionProyectos}">250</span>
+                                    <small style="color:#666;" th:text="'(' + (${#strings.containsIgnoreCase(n.nivelFormulacionProyectos, 'Nivel')} ? ${n.nivelFormulacionProyectos} : 'Nivel ' + ${n.nivelFormulacionProyectos}) + ')'">Nivel 2</small>
+                                </td>
+                                <td>
+                                    <span th:text="${n.pensamientoCientifico}">250</span>
+                                    <small style="color:#666;" th:text="'(' + (${#strings.containsIgnoreCase(n.nivelPensamientoCientifico, 'Nivel')} ? ${n.nivelPensamientoCientifico} : 'Nivel ' + ${n.nivelPensamientoCientifico}) + ')'">Nivel 2</small>
+                                </td>
+                                <td>
+                                    <span th:text="${n.disenoSoftware}">250</span>
+                                    <small style="color:#666;" th:text="'(' + (${#strings.containsIgnoreCase(n.nivelDisenoSoftware, 'Nivel')} ? ${n.nivelDisenoSoftware} : 'Nivel ' + ${n.nivelDisenoSoftware}) + ')'">Nivel 2</small>
+                                </td>
+                                <td>
+                                    <span th:if="${n.publicado}" class="badge badge-aprobado"><i class="fas fa-check"></i> Publicado</span>
+                                    <span th:unless="${n.publicado}" class="badge badge-pendiente"><i class="fas fa-clock"></i> Borrador</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a th:href="@{/coordinador/notas/editar/{id}(id=${n.id})}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                        <form th:if="${!n.publicado}" th:action="@{/coordinador/notas/publicar/{id}(id=${n.id})}" method="post" style="display:inline;">
+                                            <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-upload"></i> Publicar</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(notas)}">
+                                <td colspan="10" class="empty-state">
+                                    <div class="empty-state-icon"><i class="fas fa-chart-bar"></i></div>
+                                    <h3>No hay notas registradas</h3>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="notaModal" style="display:none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title" th:text="${nota.id} ? 'Editar Notas' : 'Registrar Notas'">Registrar Notas</span>
+                    <button class="modal-close" onclick="closeModal('notaModal')">&times;</button>
+                </div>
+                <form th:action="@{/coordinador/notas/guardar}" th:object="${nota}" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" th:field="*{id}">
+                        <div class="form-group" th:if="${nota.id == null}">
+                            <label class="form-label">Alumno *</label>
+                            <select name="alumnoId" class="form-control" required>
+                                <option value="">Seleccione...</option>
+                                <option th:each="a : ${alumnos}" th:value="${a.id}" th:text="${a.nombre + ' (' + a.codigo + ')'}"></option>
+                            </select>
+                        </div>
+                        <input type="hidden" name="alumnoId" th:if="${nota.id != null}" th:value="${nota.alumno.id}">
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Comunicacion Escrita (0-300)</label>
+                                <input type="number" class="form-control" th:field="*{comunicacionEscrita}" min="0" max="300" required>
+                                <span class="field-error" th:if="${#fields.hasErrors('comunicacionEscrita')}" th:errors="*{comunicacionEscrita}"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Razonamiento Cuantitativo (0-300)</label>
+                                <input type="number" class="form-control" th:field="*{razonamientoCuantitativo}" min="0" max="300" required>
+                                <span class="field-error" th:if="${#fields.hasErrors('razonamientoCuantitativo')}" th:errors="*{razonamientoCuantitativo}"></span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Lectura Critica</label>
+                                <input type="number" class="form-control" th:field="*{lecturaCritica}" min="0" max="300" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Competencias Ciudadanas</label>
+                                <input type="number" class="form-control" th:field="*{competenciasCiudadanas}" min="0" max="300" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Ingles</label>
+                                <input type="number" class="form-control" th:field="*{ingles}" min="0" max="300" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Puntaje Global</label>
+                                <input type="number" class="form-control" th:field="*{puntajeGlobal}" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Formulacion de Proyectos</label>
+                                <input type="number" class="form-control" th:field="*{formulacionProyectos}" min="0" max="300" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Pensamiento Cientifico</label>
+                                <input type="number" class="form-control" th:field="*{pensamientoCientifico}" min="0" max="300" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Diseno de Software</label>
+                                <input type="number" class="form-control" th:field="*{disenoSoftware}" min="0" max="300" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('notaModal')">Cancelar</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script th:if="${nota.id != null}">
+            document.addEventListener('DOMContentLoaded', function() { openModal('notaModal'); });
+        </script>
+    </section>
+    </div>
+</body>
+</html>
+

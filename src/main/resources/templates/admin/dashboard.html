@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+<body>
+    <div th:replace="~{fragments/layout :: main(~{::section})}">
+        <section th:fragment="section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-university"></i></div>
+                <div class="stat-info">
+                    <h3 th:text="${totalFacultades}">0</h3>
+                    <p>Facultades</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-chalkboard-teacher"></i></div>
+                <div class="stat-info">
+                    <h3 th:text="${totalDocentes}">0</h3>
+                    <p>Docentes</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><i class="fas fa-user-tie"></i></div>
+                <div class="stat-info">
+                    <h3 th:text="${totalDirectores}">0</h3>
+                    <p>Directores</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple"><i class="fas fa-file-alt"></i></div>
+                <div class="stat-info">
+                    <h3 th:text="${totalResoluciones}">0</h3>
+                    <p>Resoluciones</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-cogs"></i> Panel de Administracion</span>
+            </div>
+            <div class="card-body">
+                <div class="stats-grid" style="margin-bottom:0;">
+                    <a th:href="@{/admin/facultades}" class="stat-card" style="text-decoration:none;color:inherit;">
+                        <div class="stat-icon blue"><i class="fas fa-university"></i></div>
+                        <div class="stat-info">
+                            <h3 style="font-size:1rem;">Gestionar Facultades</h3>
+                            <p>Crear, editar y eliminar facultades</p>
+                        </div>
+                    </a>
+                    <a th:href="@{/admin/docentes}" class="stat-card" style="text-decoration:none;color:inherit;">
+                        <div class="stat-icon green"><i class="fas fa-chalkboard-teacher"></i></div>
+                        <div class="stat-info">
+                            <h3 style="font-size:1rem;">Gestionar Docentes</h3>
+                            <p>Administrar el directorio de docentes</p>
+                        </div>
+                    </a>
+                    <a th:href="@{/admin/directores}" class="stat-card" style="text-decoration:none;color:inherit;">
+                        <div class="stat-icon orange"><i class="fas fa-user-tie"></i></div>
+                        <div class="stat-info">
+                            <h3 style="font-size:1rem;">Gestionar Directores</h3>
+                            <p>Organigrama academico</p>
+                        </div>
+                    </a>
+                    <a th:href="@{/admin/resoluciones}" class="stat-card" style="text-decoration:none;color:inherit;">
+                        <div class="stat-icon purple"><i class="fas fa-file-alt"></i></div>
+                        <div class="stat-info">
+                            <h3 style="font-size:1rem;">Resoluciones</h3>
+                            <p>Beneficios por facultad</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    </div>
+</body>
+</html>
+

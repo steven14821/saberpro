@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Directores')}"></head>
+<body>
+    <div th:replace="~{fragments/layout :: main(~{::section})}">
+        <section th:fragment="section">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-user-tie"></i> Directores de Facultad</span>
+                <button class="btn btn-primary" onclick="openModal('directorModal')">
+                    <i class="fas fa-plus"></i> Nuevo Director
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Cedula</th>
+                                <th>Facultad</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="d : ${directores}">
+                                <td th:text="${d.id}">1</td>
+                                <td th:text="${d.nombre}">Maria Lopez</td>
+                                <td th:text="${d.cedula}">87654321</td>
+                                <td th:text="${d.facultad != null ? d.facultad.nombre : 'N/A'}">Ingenieria</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a th:href="@{/admin/directores/editar/{id}(id=${d.id})}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                        <a th:href="@{/admin/directores/eliminar/{id}(id=${d.id})}" class="btn btn-danger btn-sm btn-delete-confirm"><i class="fas fa-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(directores)}">
+                                <td colspan="5" class="empty-state">
+                                    <div class="empty-state-icon"><i class="fas fa-user-tie"></i></div>
+                                    <h3>No hay directores registrados</h3>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="directorModal" style="display:none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title" th:text="${director.id} ? 'Editar Director' : 'Nuevo Director'">Nuevo Director</span>
+                    <button class="modal-close" onclick="closeModal('directorModal')">&times;</button>
+                </div>
+                <form th:action="@{/admin/directores/guardar}" th:object="${director}" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" th:field="*{id}">
+                        <div class="form-group">
+                            <label class="form-label">Nombre *</label>
+                            <input type="text" class="form-control" th:field="*{nombre}" required>
+                            <span class="field-error" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Cedula *</label>
+                            <input type="text" class="form-control" th:field="*{cedula}" required>
+                            <span class="field-error" th:if="${#fields.hasErrors('cedula')}" th:errors="*{cedula}"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Facultad *</label>
+                            <select class="form-control" th:field="*{facultad.id}" required>
+                                <option value="">Seleccione...</option>
+                                <option th:each="f : ${facultades}" th:value="${f.id}" th:text="${f.nombre}"></option>
+                            </select>
+                            <span class="field-error" th:if="${#fields.hasErrors('facultad')}" th:errors="*{facultad}"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('directorModal')">Cancelar</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script th:if="${director.id != null}">
+            document.addEventListener('DOMContentLoaded', function() { openModal('directorModal'); });
+        </script>
+    </section>
+    </div>
+</body>
+</html>
+

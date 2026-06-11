@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Perfil del Alumno')}"></head>
+<body>
+    <div th:replace="~{fragments/layout :: main(~{::section})}">
+        <section th:fragment="section">
+        <a th:href="@{/coordinador/alumnos}" class="btn btn-secondary" style="margin-bottom:1rem;">
+            <i class="fas fa-arrow-left"></i> Volver al listado
+        </a>
+
+        <div th:fragment="contenido" id="perfil-contenido">
+            <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-user"></i> Perfil Completo del Estudiante</span>
+                <div class="btn-group">
+                    <a th:href="@{/coordinador/alumnos/editar/{id}(id=${alumno.id})}" class="btn btn-warning btn-sm" title="Editar"><i class="fas fa-edit"></i> Editar Datos</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Nombre Completo</label>
+                        <input type="text" class="form-control" th:value="${alumno.nombre}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cedula</label>
+                        <input type="text" class="form-control" th:value="${alumno.cedula}" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Codigo</label>
+                        <input type="text" class="form-control" th:value="${alumno.codigo}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Programa</label>
+                        <input type="text" class="form-control" th:value="${alumno.programa}" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Semestre</label>
+                        <input type="text" class="form-control" th:value="${alumno.semestre}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Correo Institucional / Personal</label>
+                        <input type="text" class="form-control" th:value="${alumno.correo}" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Facultad</label>
+                        <input type="text" class="form-control" th:value="${alumno.facultad != null ? alumno.facultad.nombre : 'N/A'}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado Academico</label>
+                        <input type="text" class="form-control" th:value="${alumno.estado}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" th:if="${nota != null}">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-chart-line"></i> Desglose de Resultados Saber Pro</span>
+                <span th:if="${nota.aplicaBeneficio()}" class="badge badge-aprobado"><i class="fas fa-award"></i> Aplica Beneficio (Acuerdo 01-009)</span>
+                <span th:if="${nota.publicado}" class="badge badge-aprobado" style="margin-left:0.5rem;"><i class="fas fa-check-circle"></i> Publicado</span>
+                <span th:unless="${nota.publicado}" class="badge badge-pendiente" style="margin-left:0.5rem;"><i class="fas fa-clock"></i> Pendiente Publicacion</span>
+            </div>
+            <div class="card-body">
+                <div style="text-align:center;margin-bottom:2rem;">
+                    <div class="score-circle" th:style="'--score-percent:' + (${nota.puntajeGlobal} * 100 / 300) + '%'">
+                        <span class="score-value" th:text="${nota.puntajeGlobal}">200</span>
+                        <span class="score-label">de 300</span>
+                    </div>
+                    <h3 style="margin-top:1rem;color:var(--dark);" th:text="${nota.nivelSaberPro}">Nivel 4</h3>
+                </div>
+
+                <div class="score-grid">
+                    <!-- Modulos Genericos -->
+                    <div class="score-item">
+                        <div class="score-item-value" th:text="${nota.comunicacionEscrita} + '/300'">250/300</div>
+                        <div class="score-item-label">Comunicacion Escrita</div>
+                        <div style="font-size:0.75rem; color:var(--gray); margin-top:0.2rem;" th:text="${#strings.containsIgnoreCase(nota.nivelComunicacionEscrita, 'Nivel')} ? ${nota.nivelComunicacionEscrita} : 'Nivel ' + ${nota.nivelComunicacionEscrita}"></div>
+                        <div class="competency-track" style="margin-top:0.5rem;">
+                            <div class="competency-fill" th:data-width="${nota.comunicacionEscrita * 100 / 300}"></div>
+                        </div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-item-value" th:text="${nota.razonamientoCuantitativo} + '/300'">250/300</div>
+                        <div class="score-item-label">Razonamiento Cuantitativo</div>
+                        <div style="font-size:0.75rem; color:var(--gray); margin-top:0.2rem;" th:text="${#strings.containsIgnoreCase(nota.nivelRazonamientoCuantitativo, 'Nivel')} ? ${nota.nivelRazonamientoCuantitativo} : 'Nivel ' + ${nota.nivelRazonamientoCuantitativo}"></div>
+                        <div class="competency-track" style="margin-top:0.5rem;">
+                            <div class="competency-fill" th:data-width="${nota.razonamientoCuantitativo * 100 / 300}"></div>
+                        </div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-item-value" th:text="${nota.lecturaCritica} + '/300'">250/300</div>
+                        <div class="score-item-label">Lectura Critica</div>
+                        <div style="font-size:0.75rem; color:var(--gray); margin-top:0.2rem;" th:text="${#strings.containsIgnoreCase(nota.nivelLecturaCritica, 'Nivel')} ? ${nota.nivelLecturaCritica} : 'Nivel ' + ${nota.nivelLecturaCritica}"></div>
+                        <div class="competency-track" style="margin-top:0.5rem;">
+                            <div class="competency-fill" th:data-width="${nota.lecturaCritica * 100 / 300}"></div>
+                        </div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-item-value" th:text="${nota.competenciasCiudadanas} + '/300'">250/300</div>
+                        <div class="score-item-label">Competencias Ciudadanas</div>
+                        <div style="font-size:0.75rem; color:var(--gray); margin-top:0.2rem;" th:text="${#strings.containsIgnoreCase(nota.nivelCompetenciasCiudadanas, 'Nivel')} ? ${nota.nivelCompetenciasCiudadanas} : 'Nivel ' + ${nota.nivelCompetenciasCiudadanas}"></div>
+                        <div class="competency-track" style="margin-top:0.5rem;">
+                            <div class="competency-fill" th:data-width="${nota.competenciasCiudadanas * 100 / 300}"></div>
+                        </div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-item-value" th:text="${nota.ingles} + '/300'">250/300</div>
+                        <div class="score-item-label">Ingles</div>
+                        <div style="font-size:0.75rem; color:var(--gray); margin-top:0.2rem;" th:text="(${#strings.containsIgnoreCase(nota.nivelIngles, 'Nivel')} ? ${nota.nivelIngles} : 'Nivel ' + ${nota.nivelIngles}) + ' / CEFR: ' + ${nota.nivelInglesCefr}"></div>
+                        <div class="competency-track" style="margin-top:0.5rem;">
+                            <div class="competency-fill" th:data-width="${nota.ingles * 100 / 300}"></div>
+                        </div>
+                    </div>
+
+                    <!-- Modulos Especificos (solo si es Saber Pro) -->
+                    <div class="score-item" th:if="${nota.tipoExamen == 'SABER_PRO'}">
+                        <div class="score-item-value" th:text="${nota.formulacionProyectos} + '/300'">250/300</div>
+                        <div class="score-item-label">Form. de Proyectos de Ing.</div>
+                        <div style="font-size:0.75rem; color:var(--gray); margin-top:0.2rem;" th:text="${#strings.containsIgnoreCase(nota.nivelFormulacionProyectos, 'Nivel')} ? ${nota.nivelFormulacionProyectos} : 'Nivel ' + ${nota.nivelFormulacionProyectos}"></div>
+                        <div class="competency-track" style="margin-top:0.5rem;">
+                            <div class="competency-fill" th:data-width="${nota.formulacionProyectos * 100 / 300}"></div>
+                        </div>
+                    </div>
+                    <div class="score-item" th:if="${nota.tipoExamen == 'SABER_PRO'}">
+                        <div class="score-item-value" th:text="${nota.pensamientoCientifico} + '/300'">250/300</div>
+                        <div class="score-item-label">Pensamiento Cientifico</div>
+                        <div style="font-size:0.75rem; color:var(--gray); margin-top:0.2rem;" th:text="${#strings.containsIgnoreCase(nota.nivelPensamientoCientifico, 'Nivel')} ? ${nota.nivelPensamientoCientifico} : 'Nivel ' + ${nota.nivelPensamientoCientifico}"></div>
+                        <div class="competency-track" style="margin-top:0.5rem;">
+                            <div class="competency-fill" th:data-width="${nota.pensamientoCientifico * 100 / 300}"></div>
+                        </div>
+                    </div>
+                    <div class="score-item" th:if="${nota.tipoExamen == 'SABER_PRO'}">
+                        <div class="score-item-value" th:text="${nota.disenoSoftware} + '/300'">250/300</div>
+                        <div class="score-item-label">Diseno de Software</div>
+                        <div style="font-size:0.75rem; color:var(--gray); margin-top:0.2rem;" th:text="${#strings.containsIgnoreCase(nota.nivelDisenoSoftware, 'Nivel')} ? ${nota.nivelDisenoSoftware} : 'Nivel ' + ${nota.nivelDisenoSoftware}"></div>
+                        <div class="competency-track" style="margin-top:0.5rem;">
+                            <div class="competency-fill" th:data-width="${nota.disenoSoftware * 100 / 300}"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${nota.aplicaBeneficio()}" class="alert alert-success" style="margin-top:1.5rem;">
+                    <i class="fas fa-award"></i> <strong>Beneficio Ganado:</strong> <span th:text="${nota.getBeneficio()}">Beneficio</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" th:if="${nota == null and alumno.estado == 'ANULADO'}">
+            <div class="card-body">
+                <div class="empty-state" style="background-color: #fff3f3; border: 1px solid #ffcdd2; color: #d32f2f;">
+                    <div class="empty-state-icon" style="background-color: #ffebee; color: #d32f2f;"><i class="fas fa-ban"></i></div>
+                    <h3 style="color: #c62828;">Examen Anulado</h3>
+                    <p style="color: #b71c1c;">Las pruebas Saber Pro de este estudiante han sido anuladas y no presentan resultados válidos.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" th:if="${nota == null and alumno.estado != 'ANULADO'}">
+            <div class="card-body">
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i class="fas fa-file-alt"></i></div>
+                    <h3>Sin resultados</h3>
+                    <p>El estudiante aun no cuenta con resultados registrados en el sistema.</p>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+    </div>
+</body>
+</html>

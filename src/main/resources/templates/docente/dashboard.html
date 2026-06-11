@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+<body>
+    <div th:replace="~{fragments/layout :: main(~{::section})}">
+        <section th:fragment="section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-user-graduate"></i></div>
+                <div class="stat-info">
+                    <h3 th:text="${totalAlumnos}">0</h3>
+                    <p>Alumnos en su Facultad</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-user-graduate"></i> Alumnos de su Facultad</span>
+            </div>
+            <div class="card-body">
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Codigo</th>
+                                <th>Nombre</th>
+                                <th>Programa</th>
+                                <th>Semestre</th>
+                                <th>Estado</th>
+                                <th>Puntaje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="a : ${alumnosFacultad}">
+                                <td th:text="${a.codigo}">2024001</td>
+                                <td th:text="${a.nombre}">Juan Perez</td>
+                                <td th:text="${a.programa}">Ing. Sistemas</td>
+                                <td th:text="${a.semestre}">5</td>
+                                <td>
+                                    <span th:if="${a.estado == 'ACTIVO'}" class="badge badge-activo">Activo</span>
+                                    <span th:if="${a.estado == 'ANULADO'}" class="badge badge-danger">Examen Anulado</span>
+                                    <span th:if="${a.estado == 'INACTIVO'}" class="badge badge-inactivo">Inactivo</span>
+                                    <span th:if="${a.estado == 'PENDIENTE_PAGO'}" class="badge badge-pendiente">Pendiente Pago</span>
+                                </td>
+                                <td>
+                                    <span th:if="${a.nota != null and a.nota.publicado}" th:text="${a.nota.getPuntajeGlobal()}" style="font-weight:700;color:var(--primary);">1500</span>
+                                    <span th:unless="${a.nota != null and a.nota.publicado}" style="color:var(--gray);">-</span>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(alumnosFacultad)}">
+                                <td colspan="6" class="empty-state">
+                                    <div class="empty-state-icon"><i class="fas fa-user-graduate"></i></div>
+                                    <h3>No hay alumnos en su facultad</h3>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+    </div>
+</body>
+</html>
+

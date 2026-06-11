@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Alumnos')}"></head>
+<body>
+    <div th:replace="~{fragments/layout :: main(~{::section})}">
+        <section th:fragment="section">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-user-graduate"></i> Gestion de Alumnos</span>
+                <div>
+                    <button class="btn btn-success" onclick="openModal('importModal')">
+                        <i class="fas fa-file-excel"></i> Importar Excel
+                    </button>
+                    <button class="btn btn-primary" onclick="abrirNuevoAlumno()">
+                        <i class="fas fa-plus"></i> Nuevo Alumno
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/coordinador/alumnos}" method="get" class="filter-bar">
+                    <div class="form-group">
+                        <label class="form-label">Facultad</label>
+                        <select name="facultadId" class="form-control" onchange="this.form.submit()">
+                            <option value="">Todas</option>
+                            <option th:each="f : ${facultades}" th:value="${f.id}" th:text="${f.nombre}" th:selected="${facultadFiltro == f.id}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <select name="estado" class="form-control" onchange="this.form.submit()">
+                            <option value="">Todos</option>
+                            <option value="ACTIVO" th:selected="${estadoFiltro == 'ACTIVO'}">Activo</option>
+                            <option value="ANULADO" th:selected="${estadoFiltro == 'ANULADO'}">Examen Anulado</option>
+                            <option value="PENDIENTE_PAGO" th:selected="${estadoFiltro == 'PENDIENTE_PAGO'}">Pendiente Pago</option>
+                            <option value="INACTIVO" th:selected="${estadoFiltro == 'INACTIVO'}">Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex:0;">
+                        <a th:href="@{/coordinador/alumnos}" class="btn btn-secondary"><i class="fas fa-sync"></i></a>
+                    </div>
+                </form>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Codigo</th>
+                                <th>Nombre</th>
+                                <th>Cedula</th>
+                                <th>Programa</th>
+                                <th>Semestre</th>
+                                <th>Correo</th>
+                                <th>Facultad</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="a : ${alumnos}">
+                                <td th:text="${a.codigo}">2024001</td>
+                                <td th:text="${a.nombre}">Juan Perez</td>
+                                <td th:text="${a.cedula}">12345678</td>
+                                <td th:text="${a.programa}">Ing. Sistemas</td>
+                                <td th:text="${a.semestre}">5</td>
+                                <td th:text="${a.correo}">juan@mail.com</td>
+                                <td th:text="${a.facultad != null ? a.facultad.nombre : 'N/A'}">Ingenieria</td>
+                                <td>
+                                    <span th:if="${a.estado == 'ACTIVO'}" class="badge badge-activo">Activo</span>
+                                    <span th:if="${a.estado == 'ANULADO'}" class="badge badge-danger">Examen Anulado</span>
+                                    <span th:if="${a.estado == 'INACTIVO'}" class="badge badge-inactivo">Inactivo</span>
+                                    <span th:if="${a.estado == 'PENDIENTE_PAGO'}" class="badge badge-pendiente">Pendiente Pago</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-info btn-sm" title="Ver Perfil"
+                                            th:data-id="${a.id}"
+                                            onclick="verPerfil(this.getAttribute('data-id'))">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-warning btn-sm" title="Editar"
+                                            th:data-id="${a.id}"
+                                            th:data-nombre="${a.nombre}"
+                                            th:data-cedula="${a.cedula}"
+                                            th:data-codigo="${a.codigo}"
+                                            th:data-programa="${a.programa}"
+                                            th:data-semestre="${a.semestre}"
+                                            th:data-correo="${a.correo}"
+                                            th:data-facultad-id="${a.facultad != null ? a.facultad.id : 0}"
+                                            th:data-estado="${a.estado}"
+                                            onclick="abrirEditarDesdeBtn(this)">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <a th:href="@{/coordinador/alumnos/eliminar/{id}(id=${a.id})}"
+                                           class="btn btn-danger btn-sm btn-delete-confirm" title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(alumnos)}">
+                                <td colspan="9" class="empty-state">
+                                    <div class="empty-state-icon"><i class="fas fa-user-graduate"></i></div>
+                                    <h3>No hay alumnos registrados</h3>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Alumno (Nuevo / Editar) -->
+        <div class="modal-overlay" id="alumnoModal" style="display:none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title" id="alumnoModalTitulo">Nuevo Alumno</span>
+                    <button class="modal-close" onclick="closeModal('alumnoModal')">&times;</button>
+                </div>
+                <form th:action="@{/coordinador/alumnos/guardar}" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" id="alumnoId" name="id">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Nombre *</label>
+                                <input type="text" class="form-control" id="alumnoNombre" name="nombre" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Cedula *</label>
+                                <input type="text" class="form-control" id="alumnoCedula" name="cedula" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Codigo *</label>
+                                <input type="text" class="form-control" id="alumnoCodigo" name="codigo" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Programa *</label>
+                                <select class="form-control" id="alumnoPrograma" name="programa" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="Ingenieria de Sistemas">Ingeniería de Sistemas</option>
+                                    <option value="Tecnologia en Desarrollo de Sistemas Informaticos">Tecnología en Desarrollo de Sistemas Informáticos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Semestre *</label>
+                                <input type="number" class="form-control" id="alumnoSemestre" name="semestre" min="1" max="12" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Correo *</label>
+                                <input type="email" class="form-control" id="alumnoCorreo" name="correo" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Facultad *</label>
+                                <select class="form-control" id="alumnoFacultad" name="facultad.id" required>
+                                    <option value="">Seleccione...</option>
+                                    <option th:each="f : ${facultades}" th:value="${f.id}" th:text="${f.nombre}"></option>
+                                </select>
+                            </div>
+                            <!-- Este campo solo aparece al EDITAR, no al crear -->
+                            <div class="form-group" id="estadoGroup" style="display:none;">
+                                <label class="form-label">Estado</label>
+                                <select class="form-control" id="alumnoEstado" name="estado">
+                                    <option value="ACTIVO">Activo</option>
+                                    <option value="PENDIENTE_PAGO">Pendiente de Pago</option>
+                                    <option value="ANULADO">Examen Anulado</option>
+                                    <option value="INACTIVO">Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('alumnoModal')">Cancelar</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Importar -->
+        <div class="modal-overlay" id="importModal" style="display:none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title">Importar Alumnos y Resultados</span>
+                    <button class="modal-close" onclick="closeModal('importModal')">&times;</button>
+                </div>
+                <form th:action="@{/coordinador/alumnos/importar}" method="post" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label">Archivo Excel (.xlsx)</label>
+                            <input type="file" class="form-control" name="archivoExcel" accept=".xlsx, .xls" required>
+                            <small style="color:var(--gray); margin-top:0.5rem; display:block;">
+                                El archivo debe tener el formato especificado de Saber Pro.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('importModal')">Cancelar</button>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-upload"></i> Importar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Perfil AJAX -->
+        <div class="modal-overlay" id="perfilModal" style="display:none; z-index:1000;">
+            <div class="modal-content" style="max-width:800px; max-height:90vh; overflow-y:auto;">
+                <div class="modal-header">
+                    <span class="modal-title"><i class="fas fa-user"></i> Detalle del Estudiante</span>
+                    <button type="button" class="modal-close" onclick="closeModal('perfilModal')">&times;</button>
+                </div>
+                <div class="modal-body" id="perfilModalBody"></div>
+            </div>
+        </div>
+
+        <script>
+        function abrirNuevoAlumno() {
+            document.getElementById('alumnoId').value = '';
+            document.getElementById('alumnoNombre').value = '';
+            document.getElementById('alumnoCedula').value = '';
+            document.getElementById('alumnoCodigo').value = '';
+            document.getElementById('alumnoPrograma').value = '';
+            document.getElementById('alumnoSemestre').value = '';
+            document.getElementById('alumnoCorreo').value = '';
+            document.getElementById('alumnoFacultad').value = '';
+            document.getElementById('estadoGroup').style.display = 'none';
+            document.getElementById('alumnoModalTitulo').textContent = 'Nuevo Alumno';
+            openModal('alumnoModal');
+        }
+
+        function abrirEditarDesdeBtn(btn) {
+            abrirEditarAlumno(
+                btn.getAttribute('data-id'),
+                btn.getAttribute('data-nombre'),
+                btn.getAttribute('data-cedula'),
+                btn.getAttribute('data-codigo'),
+                btn.getAttribute('data-programa'),
+                btn.getAttribute('data-semestre'),
+                btn.getAttribute('data-correo'),
+                btn.getAttribute('data-facultad-id'),
+                btn.getAttribute('data-estado')
+            );
+        }
+
+        function abrirEditarAlumno(id, nombre, cedula, codigo, programa, semestre, correo, facultadId, estado) {
+            document.getElementById('alumnoId').value = id;
+            document.getElementById('alumnoNombre').value = nombre;
+            document.getElementById('alumnoCedula').value = cedula;
+            document.getElementById('alumnoCodigo').value = codigo;
+            
+            // Lógica robusta para asegurar que el programa aparezca en el select
+            var select = document.getElementById('alumnoPrograma');
+            var exists = false;
+            for (var i = 0; i < select.options.length; i++) {
+                if (select.options[i].value === programa) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists && programa) {
+                var opt = document.createElement('option');
+                opt.value = programa;
+                opt.text = programa;
+                select.add(opt);
+            }
+            select.value = programa;
+
+            document.getElementById('alumnoSemestre').value = semestre;
+            document.getElementById('alumnoCorreo').value = correo;
+            document.getElementById('alumnoFacultad').value = facultadId;
+            document.getElementById('alumnoEstado').value = estado;
+            document.getElementById('estadoGroup').style.display = 'block';
+            document.getElementById('alumnoModalTitulo').textContent = 'Editar Alumno';
+            openModal('alumnoModal');
+        }
+        </script>
+
+    </section>
+    </div>
+</body>
+</html>

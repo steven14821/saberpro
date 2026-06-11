@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Informe de Beneficios')}"></head>
+<body>
+    <div th:replace="~{fragments/layout :: main(~{::section})}">
+        <section th:fragment="section">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-file-invoice"></i> Informe de Beneficios — Acuerdo 01-009 UTS</span>
+                <button class="btn btn-secondary no-print" onclick="window.print()">
+                    <i class="fas fa-print"></i> Imprimir
+                </button>
+            </div>
+            <div class="card-body">
+
+                <!-- Tabla de referencia rapida -->
+                <div style="display:flex;gap:1.5rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+                    <div style="flex:1;min-width:280px;background:linear-gradient(135deg,#1e3a5f,#2c5f8a);padding:1.2rem;border-radius:12px;color:#fff;">
+                        <h4 style="font-size:0.85rem;margin-bottom:0.8rem;opacity:0.8;text-transform:uppercase;letter-spacing:1px;"><i class="fas fa-graduation-cap"></i> Saber Pro (max 300)</h4>
+                        <table style="width:100%;font-size:0.82rem;border-collapse:collapse;">
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.2);">
+                                <td style="padding:4px 0;opacity:0.8;">180 – 210</td>
+                                <td style="padding:4px 6px;">Exencion trabajo de grado / Seminario IV (nota 4.5)</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.2);">
+                                <td style="padding:4px 0;opacity:0.8;">211 – 240</td>
+                                <td style="padding:4px 6px;">Exencion trabajo de grado / Seminario IV (nota 4.7) + Beca 50% derecho pecuniario</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px 0;opacity:0.8;">241 +</td>
+                                <td style="padding:4px 6px;">Exencion trabajo de grado / Seminario IV (nota 5.0) + Beca 100% derecho pecuniario</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div style="flex:1;min-width:280px;background:linear-gradient(135deg,#1e5f3a,#2c8a5f);padding:1.2rem;border-radius:12px;color:#fff;">
+                        <h4 style="font-size:0.85rem;margin-bottom:0.8rem;opacity:0.8;text-transform:uppercase;letter-spacing:1px;"><i class="fas fa-university"></i> Saber T&amp;T (max 200)</h4>
+                        <table style="width:100%;font-size:0.82rem;border-collapse:collapse;">
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.2);">
+                                <td style="padding:4px 0;opacity:0.8;">120 – 150</td>
+                                <td style="padding:4px 6px;">Exencion trabajo de grado / Seminario II (nota 4.5)</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.2);">
+                                <td style="padding:4px 0;opacity:0.8;">151 – 170</td>
+                                <td style="padding:4px 6px;">Exencion trabajo de grado / Seminario II (nota 4.7) + Beca 50% derecho pecuniario</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px 0;opacity:0.8;">171 +</td>
+                                <td style="padding:4px 6px;">Exencion trabajo de grado / Seminario II (nota 5.0) + Beca 100% derecho pecuniario</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <form th:action="@{/coordinador/informe-beneficios}" method="get" class="filter-bar no-print">
+                    <div class="form-group">
+                        <label class="form-label">Facultad</label>
+                        <select name="facultadId" class="form-control" onchange="this.form.submit()">
+                            <option value="">Todas</option>
+                            <option th:each="f : ${facultades}" th:value="${f.id}" th:text="${f.nombre}" th:selected="${facultadFiltro == f.id}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Programa</label>
+                        <input type="text" name="programa" class="form-control" th:value="${programaFiltro}" placeholder="Filtrar por programa">
+                    </div>
+                    <div class="form-group" style="flex:0;">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Filtrar</button>
+                    </div>
+                    <div class="form-group" style="flex:0;">
+                        <a th:href="@{/coordinador/informe-beneficios}" class="btn btn-secondary"><i class="fas fa-sync"></i></a>
+                    </div>
+                </form>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nombre</th>
+                                <th>Codigo</th>
+                                <th>Tipo Examen</th>
+                                <th>Puntaje Global</th>
+                                <th>Nivel</th>
+                                <th>Beneficio (Acuerdo 01-009 UTS)</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="n, iter : ${beneficiarios}">
+                                <td th:text="${iter.count}">1</td>
+                                <td th:text="${n.alumno.nombre}">Juan Perez</td>
+                                <td th:text="${n.alumno.codigo}">2024001</td>
+                                <td>
+                                    <span th:if="${n.tipoExamen == 'SABER_PRO'}" class="badge badge-info">Saber Pro</span>
+                                    <span th:if="${n.tipoExamen == 'SABER_TYT'}" class="badge badge-aprobado">Saber T&amp;T</span>
+                                </td>
+                                <td><strong th:text="${n.getPuntajeGlobal()}" style="color:var(--success);">200</strong></td>
+                                <td th:text="${n.nivelSaberPro}">Nivel 3</td>
+                                <td>
+                                    <span class="badge badge-aprobado"
+                                          style="white-space:normal;height:auto;padding:4px 8px;line-height:1.4;"
+                                          th:text="${n.getBeneficio()}">Beneficio</span>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-info btn-sm" title="Ver Detalle Completo" th:data-id="${n.alumno.id}" onclick="verPerfil(this.getAttribute('data-id'))"><i class="fas fa-eye"></i></button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(beneficiarios)}">
+                                <td colspan="8" class="empty-state">
+                                    <div class="empty-state-icon"><i class="fas fa-file-invoice"></i></div>
+                                    <h3>No hay beneficiarios</h3>
+                                    <p>No se encontraron estudiantes que apliquen para beneficios</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div th:if="${!#lists.isEmpty(beneficiarios)}" style="margin-top:1.5rem;padding:1rem;background:var(--light-gray);border-radius:var(--border-radius);">
+                    <h4 style="font-size:0.9rem;color:var(--gray);margin-bottom:0.5rem;">Resumen</h4>
+                    <p style="font-size:0.85rem;">Total de estudiantes beneficiarios: <strong th:text="${#lists.size(beneficiarios)}">0</strong></p>
+                    <p style="font-size:0.8rem;color:var(--gray);margin-top:0.3rem;">Acuerdo 01-009 de UTS — vigente desde enero 2025</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Global de Perfil AJAX -->
+        <div class="modal-overlay" id="perfilModal" style="display:none; z-index: 1000;">
+            <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+                <div class="modal-header">
+                    <span class="modal-title"><i class="fas fa-chart-line"></i> Detalle del Estudiante</span>
+                    <button type="button" class="modal-close" onclick="closeModal('perfilModal')">&times;</button>
+                </div>
+                <div class="modal-body" id="perfilModalBody">
+                    <!-- Contenido cargado via AJAX -->
+                </div>
+            </div>
+        </div>
+    </section>
+    </div>
+</body>
+</html>

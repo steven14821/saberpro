@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Pagos Pendientes')}"></head>
+<body>
+    <div th:replace="~{fragments/layout :: main(~{::section})}">
+        <section th:fragment="section">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-money-check-alt"></i> Comprobantes de Pago Pendientes</span>
+            </div>
+            <div class="card-body">
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Alumno</th>
+                                <th>Codigo</th>
+                                <th>Archivo</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="p : ${pagos}">
+                                <td th:text="${p.id}">1</td>
+                                <td th:text="${p.alumno.nombre}">Juan Perez</td>
+                                <td th:text="${p.alumno.codigo}">2024001</td>
+                                <td>
+                                    <a th:href="@{/estudiante/comprobante/descargar/{id}(id=${p.id})}" class="btn btn-secondary btn-sm" target="_blank">
+                                        <i class="fas fa-file"></i> <span th:text="${p.nombreArchivo}">archivo.pdf</span>
+                                    </a>
+                                </td>
+                                <td th:text="${#temporals.format(p.fechaRegistro, 'dd/MM/yyyy HH:mm')}">01/01/2024</td>
+                                <td><span class="badge badge-pendiente"><i class="fas fa-clock"></i> PENDIENTE</span></td>
+                                <td>
+                                    <div class="btn-group">
+                                        <form th:action="@{/coordinador/pagos/aprobar/{id}(id=${p.id})}" method="post" style="display:inline;">
+                                            <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-check"></i> Aprobar</button>
+                                        </form>
+                                        <button type="button" class="btn btn-danger btn-sm" th:data-target="'rechazoModal' + ${p.id}" onclick="openModal(this.getAttribute('data-target'))">
+                                            <i class="fas fa-times"></i> Rechazar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(pagos)}">
+                                <td colspan="7" class="empty-state">
+                                    <div class="empty-state-icon"><i class="fas fa-check-circle"></i></div>
+                                    <h3>No hay pagos pendientes</h3>
+                                    <p>Todos los comprobantes han sido revisados</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rejection Modals -->
+        <div th:each="p : ${pagos}" class="modal-overlay" th:id="'rechazoModal' + ${p.id}" style="display:none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title"><i class="fas fa-times-circle"></i> Rechazar Pago</span>
+                    <button class="modal-close" th:data-target="'rechazoModal' + ${p.id}" onclick="closeModal(this.getAttribute('data-target'))">&times;</button>
+                </div>
+                <form th:action="@{/coordinador/pagos/rechazar/{id}(id=${p.id})}" method="post">
+                    <div class="modal-body">
+                        <p>Alumno: <strong th:text="${p.alumno.nombre}"></strong></p>
+                        <div class="form-group">
+                            <label class="form-label">Motivo del Rechazo *</label>
+                            <textarea name="motivoRechazo" class="form-control" required rows="3" placeholder="Explique el motivo del rechazo..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" th:data-target="'rechazoModal' + ${p.id}" onclick="closeModal(this.getAttribute('data-target'))">Cancelar</button>
+                        <button type="submit" class="btn btn-danger"><i class="fas fa-times"></i> Confirmar Rechazo</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    </div>
+</body>
+</html>
+
