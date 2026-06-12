@@ -205,11 +205,12 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initResoluciones() {
+        Facultad facultad = facultadRepository.findAll().stream().findFirst().orElse(null);
         String[][] resoluciones = {
-            {"001-2024", "2024-01-15", "2024-12-31", "Ingenieria de Sistemas", "Beneficio de matricula para estudiantes con puntaje igual o superior a 1200 puntos en el examen Saber Pro.", "1"},
-            {"002-2024", "2024-02-01", "2024-12-31", "Todas", "Reconocimiento academico y beca de excelencia para estudiantes con puntaje igual o superior a 1400 puntos.", "1"},
-            {"003-2024", "2024-03-01", "2025-06-30", "Medicina", "Descuento del 50% en matricula para estudiantes de medicina con puntaje superior a 1300.", "2"},
-            {"001-2023", "2023-01-15", "2023-12-31", "Ingenieria de Sistemas", "Resolucion anterior de beneficios - vigencia vencida.", "1"}
+            {"001-2024", "2024-01-15", "2026-12-31", "Ingenieria de Sistemas", "Acuerdo 01-009 UTS Saber Pro: De 180 a 210 exencion de trabajo de grado / Seminario IV (nota 4.5). De 211 a 240 exencion (nota 4.7) + Beca 50% derecho pecuniario. Superior a 241 exencion (nota 5.0) + Beca 100% derecho pecuniario."},
+            {"002-2024", "2024-02-01", "2026-12-31", "Tecnologia en Desarrollo de Sistemas Informaticos", "Acuerdo 01-009 UTS Saber T&T: De 120 a 150 exencion de trabajo de grado / Seminario II (nota 4.5). De 151 a 170 exencion (nota 4.7) + Beca 50% derecho pecuniario. Superior a 171 exencion (nota 5.0) + Beca 100% derecho pecuniario."},
+            {"003-2024", "2024-03-01", "2026-06-30", "Todas las Tecnologias e Ingenierias", "Acuerdo 01-009 UTS: Exencion de trabajo de grado y becas de excelencia para estudiantes con puntajes sobresalientes en las Pruebas Saber."},
+            {"001-2023", "2023-01-15", "2023-12-31", "Ingenieria de Sistemas", "Resolucion anterior de beneficios (Acuerdo UTS antiguo) - vigencia vencida."}
         };
         for (String[] r : resoluciones) {
             Resolucion resolucion = new Resolucion();
@@ -218,7 +219,7 @@ public class DataInitializer implements CommandLineRunner {
             resolucion.setVigencia(r[2]);
             resolucion.setPrograma(r[3]);
             resolucion.setDescripcion(r[4]);
-            resolucion.setFacultad(facultadRepository.findById(Long.parseLong(r[5])).orElse(null));
+            resolucion.setFacultad(facultad);
             resolucionRepository.save(resolucion);
         }
     }

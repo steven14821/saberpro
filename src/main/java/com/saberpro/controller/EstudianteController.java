@@ -133,6 +133,8 @@ public class EstudianteController {
     @GetMapping("/resultados")
     public String verResultados(Authentication auth, Model model) {
         Alumno alumno = getAlumnoFromAuth(auth);
+        model.addAttribute("anulado", false);
+        model.addAttribute("noPublicado", false);
         if (alumno != null) {
             model.addAttribute("alumno", alumno);
             if ("ANULADO".equals(alumno.getEstado())) {
