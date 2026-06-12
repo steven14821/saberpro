@@ -1,4 +1,13 @@
+# Etapa 1: Compilar la aplicación
+FROM maven:3.9.6-eclipse-temurin-21 AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Etapa 2: Imagen final para ejecución
 FROM eclipse-temurin:21-jre
-COPY "./target/SABERPRO-1.jar" "app.jar"
+WORKDIR /app
+COPY --from=build /app/target/SABERPRO-1.jar app.jar
 EXPOSE 8118
 ENTRYPOINT ["java", "-jar", "app.jar"]
